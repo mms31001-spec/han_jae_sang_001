@@ -1,5 +1,5 @@
-const CACHE_NAME = 'physics-dodge-bombs-v2';
-const CORE_ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'physics-dodge-bombs-v3';
+const CORE_ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './bgm.mp3'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
