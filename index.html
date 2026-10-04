@@ -938,7 +938,7 @@
     <div class="ending-record">
       <div class="ending-record-head">나의 기록</div>
       <div>총 플레이 시간 <b class="mono" id="endingTime">00:00</b></div>
-      <div>총 이동 거리 <b class="mono" id="endingDistance">0.0 m</b></div>
+      <div>총 도달 거리 <b class="mono" id="endingDistance">0.0 m</b></div>
     </div>
     <button type="button" class="mode-btn ending-btn" id="endingToModeBtn">게임모드 선택으로</button>
     <div class="stage-select-footer ending-footer">
@@ -6166,23 +6166,17 @@
   // floats away glowing → white flash → 엔딩 화면2: Newton alone speaks to the player →
   // fade to black → "THE END" screen with the run's record → back to the game-mode select.
   const ENDING_DIALOGUE = {
-    '1': { speaker:'object', text: '뉴턴 선생님! 해냈어요! 3개의 구역을 모두 탈출했어요!', next: '2' },
-    '2': { speaker:'newton', text: '훌륭하네. 마찰의 구역, 충돌의 구역, 언덕의 구역까지… 자네는 이제 물리학으로 길을 찾는 법을 알게 되었지.', next: '3' },
-    '3': { speaker:'object', text: '그런데… 머릿속에 뭔가 떠오르기 시작해요.', next: '4' },
-    '4': {
-      speaker:'newton', text: '기억이 돌아오고 있는 게로군. 무엇이 보이나?',
-      choices: [
-        { label: '① 두꺼운 교과서..?', next: '5' },
-        { label: '② 빽빽한 시험지..?', next: '5' }
-      ]
-    },
-    '5': { speaker:'object', text: '"마찰이 없는 수평면 위에 질량 2kg인 물체가 정지해 있다…" 이 문장, 어디서 많이 들어본 것 같아요!', next: '6' },
-    '6': { speaker:'newton', text: '그렇다네. 자네는 물리 문제 속에 사는 \'물체\'라네. 수많은 학생들이 자네를 밀고, 부딪히고, 언덕 위로 굴리면서 물리학을 배우지.', next: '7' },
+    '1': { speaker:'object', text: '어르신! 아니, 뉴턴 선생님! 해냈어요! 3개의 구역을 모두 탈출했어요!', next: '2' },
+    '2': { speaker:'newton', text: '훌륭하군! 마찰의 구역, 충돌의 구역, 언덕의 구역까지… 그런데 자네, 뭔가 떠오르지 않나?', next: '3' },
+    '3': { speaker:'object', text: '맞아요… 머릿속에 뭔가 떠오르기 시작해요.', next: '4' },
+    '4': { speaker:'newton', text: '잊고 있었던 기억이 돌아오고 있는 것이란다. 무엇이 보이나?', next: '5' },
+    '5': { speaker:'object', text: '물리학 문제가 보여요.. "마찰이 없는 수평면 위에 질량 2kg인 물체가 정지해 있다…" 이 문장, 무척 익숙하네요.', next: '6' },
+    '6': { speaker:'newton', text: '그렇다네. 자네는 물리 문제 속에 사는 \'물체\'라네. 수많은 아이들이 자네를 밀고, 부딪히고, 언덕 위로 굴리면서 자네와 함께 물리학을 배워 왔다네.', next: '7' },
     '7': { speaker:'object', text: '그럼… 곳곳에서 폭탄이 터지던 이 세계는 뭐였죠?', next: '8' },
     '8': { speaker:'newton', text: '문제가 안 풀려서 머리가 터질 것 같은 학생들의 마음속이었다네. 허허.', next: '9' },
     '9': { speaker:'object', text: '아하하… 그럼 저는 이제 어디로 가나요?', next: '10' },
-    '10': { speaker:'newton', text: '원래 있던 곳, 물리 문제 속으로 돌아가야지. 하지만 이번엔 길을 잃지 않을 걸세. 자네에겐 이제 네 개의 열쇠가 있으니까.', next: '11' },
-    '11': { speaker:'newton', text: 'v²-v0²=2as, a=F/m, 운동량 보존, 그리고 역학적에너지 보존. 잊지 말게.', next: '12' },
+    '10': { speaker:'newton', text: '원래 있던 곳, 물리 문제 속으로 돌아가야겠지. 그곳으로 돌아가 자네가 알게 된 4개의 열쇠로 아이들이 길을 잃지 않도록 이끌어주게나.', next: '11' },
+    '11': { speaker:'newton', text: 'v²-v0²=2as, 뉴턴 운동 제2법칙, 운동량 보존, 그리고 역학적에너지 보존. 잊지 말게.', next: '12' },
     '12': {
       speaker:'object', text: '감사합니다, 뉴턴 선생님! 절대 잊지 않을게요!',
       choices: [
@@ -6190,7 +6184,7 @@
       ]
     },
     '13': { speaker:'newton', text: '그리고… 화면 앞의 자네.', next: '14' },
-    '14': { speaker:'newton', text: '물체를 안전지대로 이끈 건 바로 자네였지. 자네도 이제 물리학으로 세상을 움직일 줄 아는 사람이 되었다네. 수고 많았네!', next: null }
+    '14': { speaker:'newton', text: '매 순간 물체를 안전지대로 이끈 건 바로 자네였지. 자네도 이제 물리학으로 세상을 움직일 줄 아는 사람이 되었어. 내가 언제나 뒤에서 응원하겠네.', next: null }
   };
 
   const screenCurtainEl = document.getElementById('screenCurtain');
@@ -6331,9 +6325,21 @@
       distanceOffsetM: distanceOffsetM + ballM,
       lastSafeDistanceM: lastSafeDistanceM
     };
-    hideStageClearOverlay();
-    showTutorial(nextStage);
+    // stage clear → next tutorial: darken the page (1s), swap behind the curtain, brighten (0.5s)
+    if(tutorialEnterBusy) return;
+    tutorialEnterBusy = true;
+    screenCurtainEl.classList.add('on');
+    screenCurtainEl.style.transition = 'opacity 1s linear';
+    screenCurtainEl.style.opacity = '1';
+    setTimeout(()=>{
+      hideStageClearOverlay();
+      showTutorial(nextStage);
+      screenCurtainEl.style.transition = 'opacity 0.5s linear';
+      screenCurtainEl.style.opacity = '0';
+      setTimeout(()=>{ screenCurtainEl.classList.remove('on'); tutorialEnterBusy = false; }, 500);
+    }, 1000);
   }
+  let tutorialEnterBusy = false;
 
   // tutorial → its stage: same transition as the opening's 화면1 → 화면2
   let tutorialExitBusy = false;
