@@ -287,6 +287,35 @@
   }
   .tutorial-skip-btn:active{ transform:scale(0.96); }
   .story-canvas{ position:absolute; inset:0; width:100%; height:100%; display:none; }
+  /* page-wide black curtain for the game → ending hand-off */
+  .screen-curtain{ position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:3000; transition:opacity 1s linear; }
+  .screen-curtain.on{ pointer-events:auto; }
+  /* final "THE END" screen */
+  .ending-screen{
+    position:fixed; inset:0; background:#0A0A0A; z-index:1500;
+    display:none;
+    opacity:0; transition:opacity 1.2s ease; overflow-y:auto;
+  }
+  .ending-screen.show{ display:flex; }
+  .ending-screen.visible{ opacity:1; }
+  .ending-box{ margin:auto; display:flex; flex-direction:column; align-items:center; gap:clamp(6px, 2.4vh, 18px); padding:clamp(8px, 3vh, 24px) 16px; text-align:center; }
+  .ending-title{
+    font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+    font-size:clamp(34px, min(9vw, 14vh), 84px); font-weight:700; color:#FFFFFF; letter-spacing:0.14em;
+    text-shadow:0 0 24px rgba(255,255,255,0.25); line-height:1.05;
+  }
+  .ending-sub{
+    font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+    font-size:clamp(14px, min(2.6vw, 5vh), 24px); color:#F2EDE0; letter-spacing:0.1em; margin-top:-4px;
+  }
+  .ending-record{
+    border:1px solid rgba(255,255,255,0.25); border-radius:4px; background:rgba(255,251,242,0.06);
+    padding:clamp(4px, 1.6vh, 12px) 28px; color:#F2EDE0; font-size:15px; line-height:clamp(1.5, 0.3vh + 1.3, 1.9);
+  }
+  .ending-record b{ color:#D8B24A; margin-left:6px; }
+  .ending-record-head{ font-size:12px; letter-spacing:0.12em; color:rgba(242,237,224,0.6); }
+  .ending-footer{ max-width:400px; }
+  .ending-btn{ height:clamp(42px, 10vh, 60px); }
   .story-canvas.show{ display:block; }
   /* black curtain used when the story hands over to the stage1 tutorial (covers canvas + dialogue) */
   .story-fade-overlay{ position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; z-index:40; }
@@ -899,6 +928,24 @@
       <p>v1.0</p>
     </div>
    </div>
+  </div>
+</div>
+<div class="screen-curtain" id="screenCurtain"></div>
+<div class="ending-screen" id="endingScreen">
+  <div class="ending-box">
+    <div class="ending-title">THE END</div>
+    <div class="ending-sub">물리학으로 폭탄 피하기</div>
+    <div class="ending-record">
+      <div class="ending-record-head">나의 기록</div>
+      <div>총 플레이 시간 <b class="mono" id="endingTime">00:00</b></div>
+      <div>총 이동 거리 <b class="mono" id="endingDistance">0.0 m</b></div>
+    </div>
+    <button type="button" class="mode-btn ending-btn" id="endingToModeBtn">게임모드 선택으로</button>
+    <div class="stage-select-footer ending-footer">
+      <p>제작: 물리교사 한재상(경남교육청 과학교육원, 2026)</p>
+      <p>E-mail: hjs31001@korea.kr</p>
+      <p>v1.0</p>
+    </div>
   </div>
 </div>
 <div class="tutorial-screen" id="tutorialScreen">
@@ -4958,7 +5005,11 @@
             playWallImpactSound();
             setTimeout(()=>{
               clearedStages.push(3);
-              showStageClearOverlay('stage3: 언덕의 구역 클리어', '처음부터 시작', fullReset);
+              if(storyMode){
+                showStageClearOverlay('stage3: 언덕의 구역 클리어', '엔딩 보기', startEnding);
+              } else {
+                showStageClearOverlay('stage3: 언덕의 구역 클리어', '처음부터 시작', fullReset);
+              }
             }, 1000);
           } else {
             const cosBefore = s3CosThetaAt(ballM);
@@ -5360,6 +5411,8 @@
             proceedFromTutorial();
           } else if(choice.action === 'storyFollow'){
             leaveStoryToTutorial();
+          } else if(choice.action === 'endingFarewell'){
+            endingFarewell();
           } else {
             newtonHistory.push(newtonCurrentNodeId);
             renderNewtonNode(choice.next);
@@ -5469,9 +5522,7 @@
       updateGaugeLabelsForStage();
       rebuildTicks();
       bombOrigin = performance.now();
-      stopBgLoop();
-      bgStep = 0;
-      startBgLoop();
+      startBgLoop(); // keeps the song going if it's already playing (no restart)
       startNewShot();
       showStageBanner('stage1: 마찰의 구역');
     }
@@ -5842,7 +5893,7 @@
       ]
     },
     '12': { speaker:'object', text: '아..하하..', next: '13' },
-    '13': { speaker:'newton', text: '농담이라네. 나도 자네가 누군지는 모른다네. 다만, 자네가 기억을 되찾을 수 있도록 도움은 줄 수 있지.', next: '14' },
+    '13': { speaker:'newton', text: '농담이라네. 자네가 누군지 알려주기에는 아직 이르네. 다만, 자네가 기억을 되찾을 수 있도록 도움은 줄 수 있지.', next: '14' },
     '14': { speaker:'newton', text: '이곳은 폭발의 세계라네. 곳곳에서 폭발이 일어나고 있지. 자네가 이 세계에 있는 3개의 구역을 모두 무사히 탈출한다면, 자네의 기억이 모두 돌아오게 될 것이야.', next: '15' },
     '15': { speaker:'object', text: '어떻게 탈출하죠!?', next: '16' },
     '16': {
@@ -5873,6 +5924,11 @@
   let storyFadeAnim = null;       // { from, to, start, dur, done }
   let storyLastTs = null;
   let storyTimers = [];
+  let storyFadeColor = 'black';   // ending uses a white fade when the object leaves
+  let storyObjAlpha = 1;
+  let storyObjLift = 0;           // m above the ground (ending farewell)
+  let storyFloat = null;          // { t, done }
+  let storySparkles = [];
   let storyPaused = false; // while the 돌아가기 confirm is open
   function storyLater(fn, ms){
     storyTimers.push(setTimeout(()=>{
@@ -5935,15 +5991,28 @@
     for(let y=S_GROUND_Y; y>=0; y-=S_PX){ sctx.beginPath(); sctx.moveTo(0, y+0.5); sctx.lineTo(SW, y+0.5); sctx.stroke(); }
     sctx.strokeStyle = '#B7AD95'; sctx.lineWidth = 2;
     sctx.beginPath(); sctx.moveTo(0, S_GROUND_Y); sctx.lineTo(SW, S_GROUND_Y); sctx.stroke();
-    if(storyScene === 2) drawStoryNewton(STORY_NEWTON_X*S_PX);
-    // the object (same 0.7m blue square as in-game)
-    const half = STORY_OBJ_HALF*S_PX, ox = storyObjX*S_PX;
-    sctx.fillStyle = currentColor;
-    sctx.fillRect(ox - half, S_GROUND_Y - 2*half, 2*half, 2*half);
-    sctx.strokeStyle = '#242220'; sctx.lineWidth = 1;
-    sctx.strokeRect(ox - half, S_GROUND_Y - 2*half, 2*half, 2*half);
+    if(storyScene === 2 || storyScene === 'e1' || storyScene === 'e2') drawStoryNewton(STORY_NEWTON_X*S_PX);
+    // the object (same 0.7m blue square as in-game); in the ending it can float up and fade away
+    if(storyScene !== 'e2' && storyObjAlpha > 0){
+      const half = STORY_OBJ_HALF*S_PX, ox = storyObjX*S_PX, oy = S_GROUND_Y - storyObjLift*S_PX;
+      sctx.save();
+      sctx.globalAlpha = storyObjAlpha;
+      if(storyObjLift > 0){ sctx.shadowColor = 'rgba(255,236,150,0.95)'; sctx.shadowBlur = 24; }
+      sctx.fillStyle = currentColor;
+      sctx.fillRect(ox - half, oy - 2*half, 2*half, 2*half);
+      sctx.shadowBlur = 0;
+      sctx.strokeStyle = '#242220'; sctx.lineWidth = 1;
+      sctx.strokeRect(ox - half, oy - 2*half, 2*half, 2*half);
+      sctx.restore();
+    }
+    storySparkles.forEach((p)=>{
+      const a = Math.max(0, 1 - p.age/p.life);
+      sctx.fillStyle = 'rgba(255,226,120,' + a + ')';
+      sctx.beginPath(); sctx.arc(p.x*S_PX, S_GROUND_Y - p.y*S_PX, p.r*(0.6+0.4*a), 0, Math.PI*2); sctx.fill();
+    });
     if(storyFade > 0){
-      sctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, storyFade) + ')';
+      const c = storyFadeColor === 'white' ? '255,255,255' : '0,0,0';
+      sctx.fillStyle = 'rgba(' + c + ',' + Math.min(1, storyFade) + ')';
       sctx.fillRect(0, 0, SW, SH);
     }
   }
@@ -5968,6 +6037,24 @@
       const a = storyFadeAnim, k = Math.min(1, (ts - a.start)/a.dur);
       storyFade = a.from + (a.to - a.from)*k;
       if(k >= 1){ storyFadeAnim = null; if(a.done) a.done(); }
+    }
+    if(storyFloat){
+      // ending farewell: the object rises 1.5m while glowing, sheds sparkles and fades out (2s)
+      storyFloat.t = Math.min(1, storyFloat.t + dt/2);
+      const e = storyFloat.t*storyFloat.t*(3 - 2*storyFloat.t);
+      storyObjLift = 1.5*e;
+      storyObjAlpha = 1 - storyFloat.t;
+      if(storyFloat.t < 0.95){
+        for(let i=0;i<2;i++){
+          storySparkles.push({ x: storyObjX + (Math.random()-0.5)*0.9, y: storyObjLift + Math.random()*0.8,
+            vy: 0.4 + Math.random()*0.6, r: 1.5 + Math.random()*2.5, age: 0, life: 0.6 + Math.random()*0.6 });
+        }
+      }
+      if(storyFloat.t >= 1){ const cb = storyFloat.done; storyFloat = null; if(cb) cb(); }
+    }
+    if(storySparkles.length){
+      storySparkles.forEach((p)=>{ p.age += dt; p.y += p.vy*dt; });
+      storySparkles = storySparkles.filter((p)=> p.age < p.life);
     }
     drawStoryScene();
     requestAnimationFrame(storyTick);
@@ -5997,6 +6084,7 @@
     storyScene = 1;
     storyObjX = STORY_SPAN_M/2;            // 화면1: the object sits in the middle
     storyWalk = null; storyFade = 0; storyFadeAnim = null; storyLastTs = null;
+    storyFadeColor = 'black'; storyObjAlpha = 1; storyObjLift = 0; storyFloat = null; storySparkles = [];
     storyCanvasEl.classList.add('show');
     requestAnimationFrame(storyTick);
 
@@ -6073,6 +6161,133 @@
     showTutorial(1);
   }
 
+  // ===== Story-mode ending (after stage3 is cleared) =====
+  // 엔딩 화면1: Newton in the middle, the object walks in from the left; they talk; the object
+  // floats away glowing → white flash → 엔딩 화면2: Newton alone speaks to the player →
+  // fade to black → "THE END" screen with the run's record → back to the game-mode select.
+  const ENDING_DIALOGUE = {
+    '1': { speaker:'object', text: '뉴턴 선생님! 해냈어요! 3개의 구역을 모두 탈출했어요!', next: '2' },
+    '2': { speaker:'newton', text: '훌륭하네. 마찰의 구역, 충돌의 구역, 언덕의 구역까지… 자네는 이제 물리학으로 길을 찾는 법을 알게 되었지.', next: '3' },
+    '3': { speaker:'object', text: '그런데… 머릿속에 뭔가 떠오르기 시작해요.', next: '4' },
+    '4': {
+      speaker:'newton', text: '기억이 돌아오고 있는 게로군. 무엇이 보이나?',
+      choices: [
+        { label: '① 두꺼운 교과서..?', next: '5' },
+        { label: '② 빽빽한 시험지..?', next: '5' }
+      ]
+    },
+    '5': { speaker:'object', text: '"마찰이 없는 수평면 위에 질량 2kg인 물체가 정지해 있다…" 이 문장, 어디서 많이 들어본 것 같아요!', next: '6' },
+    '6': { speaker:'newton', text: '그렇다네. 자네는 물리 문제 속에 사는 \'물체\'라네. 수많은 학생들이 자네를 밀고, 부딪히고, 언덕 위로 굴리면서 물리학을 배우지.', next: '7' },
+    '7': { speaker:'object', text: '그럼… 곳곳에서 폭탄이 터지던 이 세계는 뭐였죠?', next: '8' },
+    '8': { speaker:'newton', text: '문제가 안 풀려서 머리가 터질 것 같은 학생들의 마음속이었다네. 허허.', next: '9' },
+    '9': { speaker:'object', text: '아하하… 그럼 저는 이제 어디로 가나요?', next: '10' },
+    '10': { speaker:'newton', text: '원래 있던 곳, 물리 문제 속으로 돌아가야지. 하지만 이번엔 길을 잃지 않을 걸세. 자네에겐 이제 네 개의 열쇠가 있으니까.', next: '11' },
+    '11': { speaker:'newton', text: 'v²-v0²=2as, a=F/m, 운동량 보존, 그리고 역학적에너지 보존. 잊지 말게.', next: '12' },
+    '12': {
+      speaker:'object', text: '감사합니다, 뉴턴 선생님! 절대 잊지 않을게요!',
+      choices: [
+        { label: '작별 인사를 한다', action: 'endingFarewell' }
+      ]
+    },
+    '13': { speaker:'newton', text: '그리고… 화면 앞의 자네.', next: '14' },
+    '14': { speaker:'newton', text: '물체를 안전지대로 이끈 건 바로 자네였지. 자네도 이제 물리학으로 세상을 움직일 줄 아는 사람이 되었다네. 수고 많았네!', next: null }
+  };
+
+  const screenCurtainEl = document.getElementById('screenCurtain');
+  const endingScreenEl = document.getElementById('endingScreen');
+  let endingRecord = { elapsedMs: 0, distanceM: 0 };
+
+  function startEnding(){
+    // the run's record, frozen at the moment the ending starts
+    endingRecord = {
+      elapsedMs: gameStartTime !== null ? (performance.now() - gameStartTime) : 0,
+      distanceM: distanceOffsetM + ballM
+    };
+    // darken the whole page (1s), set the ending scene up behind the curtain, then brighten (0.5s)
+    screenCurtainEl.classList.add('on');
+    screenCurtainEl.style.transition = 'opacity 1s linear';
+    screenCurtainEl.style.opacity = '1';
+    setTimeout(()=>{
+      hideStageClearOverlay();
+      tutorialScreenEl.classList.remove('fade-out');
+      if(!document.body.contains(tutorialScreenEl)) document.body.appendChild(tutorialScreenEl);
+      if(realGameStageEl && stageInnerEl.parentElement !== realGameStageEl) realGameStageEl.appendChild(stageInnerEl);
+      tutorialStartWrap.style.display = 'none';
+      tutorialSkipBtn.style.display = 'none';
+      tutorialBannerEl.classList.remove('show');
+      tutorialContentEl.style.display = 'none';
+      tutorialScreenEl.classList.add('show');
+
+      storyActive = true;
+      storyPaused = false;
+      storyBackBtnEl.classList.add('show');
+      storyScene = 'e1';
+      storyObjX = STORY_OBJ_HALF;          // walks in from the far left
+      storyWalk = null; storyFade = 0; storyFadeAnim = null; storyLastTs = null;
+      storyFadeColor = 'black'; storyObjAlpha = 1; storyObjLift = 0; storyFloat = null; storySparkles = [];
+      storyCanvasEl.classList.add('show');
+      requestAnimationFrame(storyTick);
+
+      screenCurtainEl.style.transition = 'opacity 0.5s linear';
+      screenCurtainEl.style.opacity = '0';
+      setTimeout(()=>{ screenCurtainEl.classList.remove('on'); }, 500);
+
+      const stopX = STORY_NEWTON_X - STORY_NEWTON_HALF_W - 1 - STORY_OBJ_HALF;
+      storyLater(()=>{
+        storyWalkTo(stopX, ()=>{
+          storyLater(()=>{ showNewtonDialogue(ENDING_DIALOGUE, '1'); }, 1000);
+        });
+      }, 500);
+    }, 1000);
+  }
+
+  function endingFarewell(){
+    newtonDialogueEl.classList.remove('show');
+    newtonDialogueActive = false;
+    newtonDialogueOnComplete = null;
+    storyFloat = { t: 0, done: ()=>{
+      // white flash: brighten to white (1s), switch to 엔딩 화면2, fade back in (0.5s)
+      storyFadeColor = 'white';
+      storyFadeTo(1, 1000, ()=>{
+        storyScene = 'e2';
+        storySparkles = [];
+        storyFadeTo(0, 500, ()=>{
+          storyFadeColor = 'black';
+          storyLater(()=>{
+            showNewtonDialogue(ENDING_DIALOGUE, '13', ()=>{
+              // after the last line: fade to black, then the THE END screen
+              storyBackBtnEl.classList.remove('show');
+              storyFadeTo(1, 1000, showEndingScreen);
+            });
+          }, 1000);
+        });
+      });
+    }};
+  }
+
+  function showEndingScreen(){
+    storyActive = false;
+    storyTimers.forEach(clearTimeout); storyTimers = [];
+    storyWalk = null; storyFadeAnim = null; storyFloat = null;
+    setDialogueSpeaker('newton');
+    document.getElementById('endingTime').textContent = formatTime(endingRecord.elapsedMs);
+    document.getElementById('endingDistance').textContent = endingRecord.distanceM.toFixed(1) + ' m';
+    endingScreenEl.classList.add('show');
+    void endingScreenEl.offsetWidth;
+    endingScreenEl.classList.add('visible');
+    storyCanvasEl.classList.remove('show');
+    if(tutorialScreenEl && document.body.contains(tutorialScreenEl)) tutorialScreenEl.remove();
+    tutorialContentEl.style.display = '';
+  }
+  function hideEndingScreen(){
+    endingScreenEl.classList.remove('visible', 'show');
+  }
+  document.getElementById('endingToModeBtn').addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    returnToStageSelect();
+    hideEndingScreen();
+  });
+
   function showTutorial(chosenStage){
     pendingTutorialStage = chosenStage;
     stageSelectEl.classList.add('fade-out');
@@ -6120,7 +6335,24 @@
     showTutorial(nextStage);
   }
 
+  // tutorial → its stage: same transition as the opening's 화면1 → 화면2
+  let tutorialExitBusy = false;
   function proceedFromTutorial(){
+    if(tutorialExitBusy) return;
+    tutorialExitBusy = true;
+    newtonDialogueEl.classList.remove('show');
+    screenCurtainEl.classList.add('on');
+    screenCurtainEl.style.transition = 'opacity 1s linear';
+    screenCurtainEl.style.opacity = '1';
+    setTimeout(()=>{
+      proceedFromTutorialNow();
+      screenCurtainEl.style.transition = 'opacity 0.5s linear';
+      screenCurtainEl.style.opacity = '0';
+      setTimeout(()=>{ screenCurtainEl.classList.remove('on'); tutorialExitBusy = false; }, 500);
+    }, 1000);
+  }
+
+  function proceedFromTutorialNow(){
     clearTimeout(tutorialBannerTimer);
     clearTimeout(stageSelectRemoveTimer);
     tutorialMode = false;
@@ -6134,8 +6366,7 @@
       realGameStageEl.appendChild(stageInnerEl);
     }
     tutorialContentEl.style.display = '';
-    tutorialScreenEl.classList.add('fade-out');
-    setTimeout(()=>{ tutorialScreenEl.remove(); }, 1000);
+    tutorialScreenEl.remove(); // hidden behind the black curtain, so it can go at once
     ballM = 0;
     legStartM = 0;
     distanceOffsetM = 0;
