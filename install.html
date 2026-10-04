@@ -44,6 +44,38 @@
     -webkit-tap-highlight-color:transparent;
   }
   .chrome-btn:active{ transform:scale(0.97); }
+  .share-svg{ width:15px; height:18px; vertical-align:-3px; }
+  /* iPhone/iPad: step-by-step "Add to Home Screen" guide (Safari offers no one-tap install) */
+  .ios-guide{
+    position:fixed; inset:0; background:rgba(0,0,0,0.78); z-index:50;
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .ios-guide.show{ display:flex; }
+  .ios-guide-card{
+    background:#17140F; border:1px solid #3A3328; border-radius:14px; padding:22px 20px 18px;
+    max-width:330px; width:100%; text-align:left; font-size:14.5px; line-height:1.7;
+  }
+  .ios-guide-card h2{ font-size:17px; margin:0 0 14px; text-align:center; color:#F2EDE0; }
+  .ios-guide-step{ display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .ios-guide-num{
+    flex:none; width:26px; height:26px; border-radius:50%; background:#1F8A6E; color:#fff;
+    font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+  .ios-guide-step b{ color:#D8B24A; }
+  .ios-guide-note{ color:#ABA593; font-size:12.5px; }
+  .ios-guide-close{
+    display:block; width:100%; margin-top:6px; font-family:inherit; font-size:15px; font-weight:700;
+    padding:12px 0; border-radius:8px; border:none; background:#F2EDE0; color:#0A0A0A; cursor:pointer;
+  }
+  .ios-guide-arrow{
+    position:fixed; z-index:51; font-size:44px; color:#D8B24A; display:none;
+    text-shadow:0 0 12px rgba(0,0,0,0.8); pointer-events:none;
+  }
+  .ios-guide.show ~ .ios-guide-arrow{ display:block; }
+  .ios-guide-arrow.down{ bottom:6px; left:50%; transform:translateX(-50%); animation:bobDown 0.9s ease-in-out infinite; }
+  .ios-guide-arrow.up{ top:6px; right:70px; animation:bobUp 0.9s ease-in-out infinite; }
+  @keyframes bobDown{ 0%,100%{ transform:translate(-50%,0); } 50%{ transform:translate(-50%,10px); } }
+  @keyframes bobUp{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
 </style>
 </head>
 <body>
@@ -54,20 +86,24 @@
   <button id="installBtn" type="button">홈 화면에 추가</button>
   <p class="status" id="statusMsg"></p>
 
+  <button class="chrome-btn" id="iosAddBtn" type="button">홈 화면에 추가</button>
+
   <div class="ios-steps" id="iosSteps">
     아이폰 · 아이패드에서 설치하는 방법<br><br>
-    1. 하단(또는 상단)의 <span class="share-icon">공유</span> 버튼을 눌러주세요<br>
+    1. 하단(또는 상단)의 <span class="share-icon">공유 <svg class="share-svg" viewBox="0 0 20 24" fill="none" stroke="#D8B24A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15V2"/><path d="M5.5 6.5L10 2l4.5 4.5"/><path d="M6 10H3.5v12h13V10H14"/></svg></span> 버튼을 눌러주세요<br>
     2. <b>"홈 화면에 추가"</b>를 선택해주세요<br>
     3. 오른쪽 위 <b>"추가"</b>를 누르면 완료돼요!
   </div>
 
   <a class="chrome-btn" id="chromeBtn" href="#">Chrome으로 열기</a>
+  <a class="chrome-btn" id="safariBtn" href="#">Safari로 열기</a>
 
   <div class="inapp-steps" id="inappSteps">
-    카카오톡 안에서는 설치 기능이 제한되어 있어요.<br>먼저 <b>실제 브라우저</b>로 열어주세요.<br><br>
-    1. 우측 상단(또는 하단)의 <span class="menu-icon">공유</span> 버튼을 눌러주세요<br>
-    2. <b>"Safari로 열기"</b>를 선택해주세요<br>
-    3. 열린 브라우저에서 이 페이지가 다시 뜨면, 그때 안내에 따라 설치해주세요
+    <span id="iosInappWhere">카카오톡 안에서는</span> 설치 기능이 제한되어 있어요.<br><br>위의 <b>"Safari로 열기"</b> 버튼을 눌러주세요.<br><br>
+    버튼이 동작하지 않으면<br>
+    1. 우측 하단(또는 상단)의 <span class="menu-icon">공유</span> 또는 <span class="menu-icon">⋯</span> 버튼을 눌러주세요<br>
+    2. <b>"Safari로 열기"</b>(또는 "기본 브라우저로 열기")를 선택해주세요<br>
+    3. Safari에서 이 페이지가 다시 뜨면, 안내에 따라 설치해주세요
   </div>
 
   <div class="inapp-steps" id="inappAndroidSteps">
@@ -88,12 +124,24 @@
 
   <p class="fallback" id="fallbackMsg">이 브라우저에서는 자동 설치가 지원되지 않아요.<br>Chrome, Safari, Edge 등 최신 브라우저에서<br>다시 열어봐 주세요.</p>
 
+  <div class="ios-guide" id="iosGuide">
+    <div class="ios-guide-card">
+      <h2>홈 화면에 추가하는 방법</h2>
+      <div class="ios-guide-step"><div class="ios-guide-num">1</div><div><span id="iosShareWhere">화면 <b>아래쪽 가운데</b></span>의 <b>공유 버튼</b> <svg class="share-svg" viewBox="0 0 20 24" fill="none" stroke="#D8B24A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15V2"/><path d="M5.5 6.5L10 2l4.5 4.5"/><path d="M6 10H3.5v12h13V10H14"/></svg> 을 눌러주세요.<br><span class="ios-guide-note">공유 버튼이 안 보이면 <b>⋯</b> 버튼을 먼저 누르면 나와요.</span></div></div>
+      <div class="ios-guide-step"><div class="ios-guide-num">2</div><div>목록을 위로 올려 <b>"홈 화면에 추가"</b> <span class="menu-icon">＋</span> 를 눌러주세요.<br><span class="ios-guide-note">안 보이면 목록 맨 아래 "편집"에서 추가할 수 있어요.</span></div></div>
+      <div class="ios-guide-step"><div class="ios-guide-num">3</div><div>오른쪽 위 <b>"추가"</b>를 누르면 완료!<br><span class="ios-guide-note">홈 화면에 생긴 아이콘으로 게임을 실행해요.</span></div></div>
+      <button class="ios-guide-close" id="iosGuideClose" type="button">확인</button>
+    </div>
+  </div>
+  <div class="ios-guide-arrow down" id="iosGuideArrow">⬇</div>
+
 <script>
   (function(){
     var installBtn = document.getElementById('installBtn');
     var iosSteps = document.getElementById('iosSteps');
     var statusMsg = document.getElementById('statusMsg');
     var deferredPrompt = null;
+    var promptSeen = false; // Chrome offered installation at least once (even if already used)
 
     // Already installed and launched from the home-screen icon? Just go straight in.
     var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -103,7 +151,22 @@
     }
 
     var ua = navigator.userAgent || '';
-    var isIOS = /iPhone|iPad|iPod/i.test(ua) && !window.MSStream;
+    var isIPadDesktopUA = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1; // iPadOS reports itself as a Mac
+    var isIPad = /iPad/i.test(ua) || isIPadDesktopUA;
+    var isIOS = (/iPhone|iPad|iPod/i.test(ua) || isIPadDesktopUA) && !window.MSStream;
+    var isKakao = /KAKAOTALK/i.test(ua);
+    // iOS browsers/in-app viewers other than Safari (they can't install the app properly)
+    var isIOSNonSafari = isIOS && /CriOS|FxiOS|EdgiOS|OPiOS|Whale|NAVER|DaumApps|KAKAOTALK|Instagram|FBAN|FBAV|Line\//i.test(ua);
+
+    // opens this same page in Safari: KakaoTalk's own "open in external browser" link,
+    // otherwise Safari's x-safari-https:// scheme (iOS 17+)
+    function showSafariButton(){
+      var btn = document.getElementById('safariBtn');
+      btn.href = isKakao
+        ? 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href)
+        : 'x-safari-' + location.href;
+      btn.style.display = 'inline-block';
+    }
     var isInApp = /KAKAOTALK/i.test(ua) || /FBAN|FBAV/i.test(ua) || /Instagram/i.test(ua) || /NAVER\(/i.test(ua) || /Line\//i.test(ua);
     var isAndroid = /Android/i.test(ua);
     // Samsung Internet builds its own install package (WebAPK) targeting an old Android
@@ -120,13 +183,21 @@
       btn.style.display = 'inline-block';
     }
 
+    if(isInApp && isAndroid){
+      showChromeButton();
+      document.getElementById('inappAndroidSteps').style.display = 'block';
+      return;
+    }
+
+    if(isIOSNonSafari){
+      showSafariButton();
+      document.getElementById('iosInappWhere').textContent = isKakao ? '카카오톡 안에서는' : '이 브라우저에서는';
+      document.getElementById('inappSteps').style.display = 'block';
+      return;
+    }
+
     if(isInApp){
-      if(isAndroid){
-        showChromeButton();
-        document.getElementById('inappAndroidSteps').style.display = 'block';
-      } else {
-        document.getElementById('inappSteps').style.display = 'block';
-      }
+      document.getElementById('inappSteps').style.display = 'block';
       return;
     }
 
@@ -139,6 +210,7 @@
     window.addEventListener('beforeinstallprompt', function(e){
       e.preventDefault();
       deferredPrompt = e;
+      promptSeen = true;
       installBtn.style.display = 'inline-block';
       var fb = document.getElementById('fallbackMsg');
       if(fb) fb.style.display = 'none';
@@ -151,6 +223,7 @@
       deferredPrompt.userChoice.then(function(choice){
         deferredPrompt = null;
         if(choice.outcome === 'accepted'){
+          installBtn.style.display = 'none';
           statusMsg.textContent = '설치 중입니다…';
           statusMsg.style.display = 'block';
         } else {
@@ -160,17 +233,29 @@
     });
 
     window.addEventListener('appinstalled', function(){
+      installBtn.style.display = 'none';
       statusMsg.textContent = '설치 완료! 게임을 시작합니다…';
       statusMsg.style.display = 'block';
       setTimeout(function(){ location.replace('index.html'); }, 600);
     });
 
     if(isIOS){
+      // Safari has no install API — the button opens a visual guide pointing at the share button
+      var iosAddBtn = document.getElementById('iosAddBtn');
+      var guide = document.getElementById('iosGuide');
+      var arrow = document.getElementById('iosGuideArrow');
+      if(isIPad){
+        arrow.className = 'ios-guide-arrow up'; arrow.textContent = '⬆';
+        document.getElementById('iosShareWhere').innerHTML = '화면 <b>오른쪽 위</b>';
+      }
+      iosAddBtn.style.display = 'inline-block';
+      iosAddBtn.addEventListener('click', function(){ guide.classList.add('show'); });
+      document.getElementById('iosGuideClose').addEventListener('click', function(){ guide.classList.remove('show'); });
       iosSteps.style.display = 'block';
     } else {
       var fallbackMsg = document.getElementById('fallbackMsg');
       setTimeout(function(){
-        if(!deferredPrompt){
+        if(!promptSeen){
           fallbackMsg.style.display = 'block';
         }
       }, 2500);
