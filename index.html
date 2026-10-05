@@ -5497,6 +5497,27 @@
   let stageSelectRemoveTimer = null;
   let pendingTutorialStage = null;
 
+  // Android: go fullscreen and lock the screen to landscape on 입장, so turning
+  // the phone doesn't make the browser rotate at all (no brief spin). Browsers
+  // only allow the lock in fullscreen (or in the installed app). iOS has no such
+  // API, so there the page keeps itself landscape via html.force-land instead.
+  function lockLandscape(){
+    try{
+      if(!/Android/i.test(navigator.userAgent)) return;
+      const lock = ()=>{
+        if(screen.orientation && screen.orientation.lock){
+          return screen.orientation.lock('landscape').catch(()=>{});
+        }
+      };
+      const standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+      if(standalone || document.fullscreenElement){ lock(); return; }
+      const el = document.documentElement;
+      const req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if(!req) return;
+      Promise.resolve(req.call(el, { navigationUI: 'hide' })).then(lock).catch(()=>{});
+    }catch(err){ /* not supported here: the CSS rotation still keeps it landscape */ }
+  }
+
   startGameBtn.addEventListener('click', (e)=>{
     e.preventDefault();
     e.stopPropagation();
@@ -5504,6 +5525,7 @@
     stageSelectEl.classList.add('show');
     splashEl.classList.add('fade-out');
     tryStartAudio();
+    lockLandscape();
     rotateCheckActive = true;
     updateRotateOverlay();
     setTimeout(()=>{
