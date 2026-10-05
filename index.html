@@ -215,6 +215,49 @@
     -webkit-tap-highlight-color:transparent;
   }
   .mode-btn:active{ transform:scale(0.97); }
+  /* same size as 게임 시작, outline look */
+  .mode-btn.mode-btn-outline{ background:transparent; color:#F2EDE0; border-color:rgba(255,255,255,0.6); }
+  .mode-btn.mode-btn-small{ font-size:15px; width:220px; height:42px; background:transparent; color:#F2EDE0; border-color:rgba(255,255,255,0.6); }
+  /* main screen: the big title is the game name, so the small heading above it is hidden */
+  .stage-select[data-view="mode"] .stage-select-heading{ display:none; }
+  .stage-select[data-view="mode"] .stage-select-title{ font-size:44px; letter-spacing:0.1em; text-align:center; }
+  .intent-panel{
+    position:absolute; inset:0; z-index:5;
+    display:none; flex-direction:column; align-items:center; gap:8px;
+    padding:14px 22px 12px; box-sizing:border-box;
+    background:#0A0A0A;
+  }
+  .intent-panel.show{ display:flex; }
+  .intent-title{ font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif; font-size:22px; font-weight:700; color:#FFFFFF; letter-spacing:0.12em; }
+  .intent-body{
+    flex:1; min-height:0; overflow-y:auto; width:100%;
+    color:#F2EDE0; font-size:14.8px; line-height:1.55; text-align:left;
+    -webkit-overflow-scrolling:touch;
+  }
+  .intent-body p{ margin:0 0 8px; word-break:keep-all; }
+  .hof-table-wrap{ flex:1; min-height:0; overflow-y:auto; width:100%; -webkit-overflow-scrolling:touch; }
+  .hof-table{ width:100%; border-collapse:collapse; color:#F2EDE0; font-size:19px; }
+  .hof-table th{ position:sticky; top:0; background:#0A0A0A; color:rgba(242,237,224,0.7); font-size:15px; font-weight:600; padding:7px 8px; border-bottom:1px solid rgba(255,255,255,0.3); }
+  .hof-table td{ padding:8px 8px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .hof-table td:nth-child(2){ word-break:break-all; }
+  .hof-table td:nth-child(3){ font-family:"JetBrains Mono",ui-monospace,monospace; color:#D8B24A; }
+  .hof-table tr.top1 td{ color:#FFD54A; font-weight:700; }
+  .hof-table tr.top2 td:first-child, .hof-table tr.top3 td:first-child{ font-weight:700; }
+  .hof-empty{ color:rgba(242,237,224,0.7); text-align:center; padding:18px 0; font-size:14px; }
+  .hof-register{ display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; }
+  .hof-register input{
+    font-family:inherit; font-size:15px; width:190px; padding:9px 10px; border-radius:4px;
+    border:1px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.08); color:#FFFFFF; outline:none;
+  }
+  .hof-register input:focus{ border-color:#D8B24A; }
+  .hof-register button{
+    font-family:inherit; font-size:14px; font-weight:700; padding:9px 14px; border-radius:4px; cursor:pointer;
+    border:1px solid #D8B24A; background:#D8B24A; color:#0A0A0A;
+  }
+  .hof-register button:disabled{ opacity:0.5; cursor:default; }
+  .hof-msg{ min-height:1.2em; font-size:13.5px; color:#F2EDE0; text-align:center; }
+  .hof-msg.err{ color:#FF8A80; }
+  .intent-body .intent-sign{ text-align:center; color:rgba(242,237,224,0.75); margin-top:4px; }
   .mode-back-btn{
     position:absolute; top:14px; left:16px;
     font-family:inherit; font-size:12px; font-weight:600;
@@ -370,6 +413,11 @@
     flex:none;
   }
   .newton-face svg, .newton-face img{ width:100%; height:100%; display:block; object-fit:cover; }
+  /* physics symbols: quantities in italic serif, numbers/units upright (SI convention) */
+  .sym{ font-family:"Times New Roman",Times,"Noto Serif","Liberation Serif",serif; font-style:italic; font-size:1.08em; padding:0 0.04em; }
+  /* 조준바 라벨의 v₀: 1.5배 크기 */
+  .gauge-v0{ font-size:1.5em; line-height:0; vertical-align:-0.06em; }
+  .gauge-sub{ font-size:0.6em; font-weight:600; position:relative; top:0.3em; margin-left:0.04em; }
   .newton-text-area{
     flex:1;
     min-width:0;
@@ -633,6 +681,7 @@
     font-size:12.5px; color:var(--ink-soft);
     text-align:center; margin:-6px 0 0;
   }
+  .item-pickup-desc.item-pickup-hint{ color:#D62D2D; font-weight:600; margin-top:-10px; }
   .item-pickup-overlay button{
     font-family:inherit; font-size:14px; font-weight:600; border-radius:2px;
     padding:8px 22px; line-height:1.2; cursor:pointer; border:1px solid var(--ink);
@@ -642,6 +691,9 @@
     background:transparent; color:var(--ink); border:1px solid var(--panel-border);
   }
   .confirm-btn-row{ display:flex; gap:10px; }
+  /* 기억의 조각 pickup icon: a softly glowing 1/3 slice of a circle */
+  .memory-icon{ width:56px; height:44px; overflow:visible; animation:memory-glow 1.6s ease-in-out infinite; }
+  @keyframes memory-glow{ 0%,100%{ filter:drop-shadow(0 0 4px var(--mem-glow)); } 50%{ filter:drop-shadow(0 0 12px var(--mem-glow)); } }
 
   .sedative-btn{
     position:absolute; bottom:104px; right:14px;
@@ -923,10 +975,11 @@
    <div class="stage-select-inner" id="stageSelectInner">
     <div class="stage-select-heading">물리학으로 폭탄 피하기</div>
     <button type="button" class="mode-back-btn" id="backToModeBtn">← 게임모드 선택</button>
-    <div class="stage-select-title" id="selectTitle">게임모드 선택</div>
+    <div class="stage-select-title" id="selectTitle">물리학으로 폭탄 피하기</div>
     <div class="mode-select-grid" id="modeGrid">
-      <button type="button" class="mode-btn" id="storyModeBtn">게임 시작(스토리 모드)</button>
-      <button type="button" class="mode-btn" id="stageModeBtn">스테이지 선택 모드</button>
+      <button type="button" class="mode-btn" id="storyModeBtn">게임 시작</button>
+      <button type="button" class="mode-btn mode-btn-outline" id="intentBtn">게임 기획 의도</button>
+      <button type="button" class="mode-btn mode-btn-outline" id="hofBtn">명예의 전당</button>
     </div>
     <div class="stage-select-grid" id="stageGrid">
       <div class="stage-card">
@@ -947,6 +1000,26 @@
       <p>E-mail: hjs31001@korea.kr</p>
       <p>v1.0</p>
     </div>
+    <div class="intent-panel" id="intentPanel" role="dialog" aria-label="게임 기획 의도">
+      <div class="intent-title">게임 기획 의도</div>
+      <div class="intent-body">
+        <p>물리 수업 시간에 학생들이 가장 많이 하는 말 중 하나는 "공식은 외웠는데 어디에 쓰는지 모르겠어요"입니다. 「물리학으로 폭탄 피하기」는 물리 공식을 외워야 할 대상이 아니라, 앞으로 일어날 일을 예측하고 원하는 결과를 만들어 내는 '도구'로 경험하게 하려는 마음에서 시작했습니다.</p>
+        <p>플레이어는 폭탄이 쉴 새 없이 터지는 낯선 세계에서 물체를 안전지대까지 이끌어야 합니다. 마찰의 구역에서는 등가속도 운동 공식과 뉴턴 운동 제2법칙을, 충돌의 구역에서는 운동량 보존 법칙을, 언덕의 구역에서는 역학적 에너지 보존 법칙을 직접 적용해야만 살아남을 수 있습니다. 감으로 쏘았을 때와 물리학을 알고 쏘았을 때의 차이를 몸으로 느끼는 순간, 비로소 새로운 세계가 보이게 될 것이라고 믿습니다.</p>
+        <p>튜토리얼은 '먼저 도전하고, 실패하고, 원리를 배우고, 다시 도전하는' 흐름으로 구성했습니다. 실패는 끝이 아니라 배움의 출발점이며, 대화와 퀴즈를 따라가며 해결 방법을 찾아가도록 했습니다. 이 게임을 통해 물리학이 어렵기만 한 과목이 아니라, 세상을 움직이는 원리를 이해하는 즐거운 과목으로 남기를 바랍니다.</p>
+      </div>
+      <button type="button" class="mode-btn mode-btn-small" id="intentCloseBtn">닫기</button>
+    </div>
+    <div class="intent-panel hof-panel" id="hofPanel" role="dialog" aria-label="명예의 전당">
+      <div class="intent-title">명예의 전당</div>
+      <div class="hof-table-wrap" id="hofTableWrap">
+        <table class="hof-table">
+          <thead><tr><th>순위</th><th>닉네임</th><th>스테이지1, 2, 3 클리어 시간</th></tr></thead>
+          <tbody id="hofTbody"></tbody>
+        </table>
+        <div class="hof-empty" id="hofStatus">불러오는 중…</div>
+      </div>
+      <button type="button" class="mode-btn mode-btn-small" id="hofCloseBtn">닫기</button>
+    </div>
    </div>
   </div>
 </div>
@@ -957,9 +1030,14 @@
     <div class="ending-sub">물리학으로 폭탄 피하기</div>
     <div class="ending-record">
       <div class="ending-record-head">나의 기록</div>
-      <div>총 플레이 시간 <b class="mono" id="endingTime">00:00</b></div>
-      <div>총 도달 거리 <b class="mono" id="endingDistance">0.0 m</b></div>
+      <div>스테이지1, 2, 3 플레이 시간 <b class="mono" id="endingTime">00:00</b></div>
+      <div>총 플레이 시간 <b class="mono" id="endingTotalTime">00:00</b></div>
     </div>
+    <div class="hof-register" id="hofRegister">
+      <input type="text" id="hofName" maxlength="7" placeholder="닉네임 (7자 이내)" autocomplete="off" spellcheck="false">
+      <button type="button" id="hofSubmitBtn">명예의 전당 등록</button>
+    </div>
+    <div class="hof-msg" id="hofMsg"></div>
     <button type="button" class="mode-btn ending-btn" id="endingToModeBtn">게임모드 선택으로</button>
     <div class="stage-select-footer ending-footer">
       <p>제작: 물리교사 한재상(경남교육청 과학교육원, 2026)</p>
@@ -977,7 +1055,7 @@
         <div class="story-fade-overlay" id="storyFadeOverlay"></div>
         <button type="button" class="back-btn story-back-btn" id="storyBackBtn">돌아가기</button>
         <div class="item-pickup-overlay story-back-confirm" id="storyBackConfirmOverlay">
-          <div class="item-pickup-text">게임모드 선택창으로 돌아가시겠습니까?</div>
+          <div class="item-pickup-text">메인 화면으로 돌아가시겠습니까?</div>
           <div class="confirm-btn-row">
             <button id="storyBackConfirmBtn">확인</button>
             <button id="storyBackCancelBtn" class="secondary-btn">취소</button>
@@ -1049,7 +1127,14 @@
         <div class="item-pickup-text">신경안정제를 획득하였습니다.</div>
         <div class="pill-icon"><span class="pill-half left"></span><span class="pill-half right"></span></div>
         <p class="item-pickup-desc">사용 시 조준바의 속도 50% 감소</p>
+        <p class="item-pickup-desc item-pickup-hint">*shot 버튼 위 아이콘을 눌러서 사용 가능</p>
         <button id="itemPickupConfirmBtn">확인</button>
+      </div>
+
+      <div class="item-pickup-overlay" id="memoryPickupOverlay">
+        <div class="item-pickup-text" id="memoryPickupText">첫 번째 기억의 조각을 습득하였습니다.</div>
+        <svg class="memory-icon" id="memoryPickupIcon" viewBox="0 0 56 44" aria-hidden="true"><path id="memoryPickupPath" d="M28,40 L5.48,27 A26,26 0 0 1 50.52,27 Z" fill="#FF9BCB" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/></svg>
+        <button id="memoryPickupConfirmBtn">확인</button>
       </div>
 
       <button type="button" class="sedative-btn" id="sedativeBtn" style="display:none;" aria-label="신경안정제 사용">
@@ -1068,7 +1153,7 @@
       </div>
 
       <div class="item-pickup-overlay" id="backConfirmOverlay">
-        <div class="item-pickup-text">게임모드 선택창으로 돌아가시겠습니까?</div>
+        <div class="item-pickup-text">메인 화면으로 돌아가시겠습니까?</div>
         <div class="confirm-btn-row">
           <button id="backConfirmBtn">확인</button>
           <button id="backCancelBtn" class="secondary-btn">취소</button>
@@ -1091,7 +1176,7 @@
 
       <div class="gauge active stage-gauge" id="gauge-v0">
         <div class="gauge-head">
-          <span class="gauge-label" id="label-v0">초기속도 v0 (m/s)</span>
+          <span class="gauge-label" id="label-v0">초기속도 <span class="gauge-v0"><span class="sym">v</span><span class="gauge-sub">0</span></span> (m/s)</span>
           <span class="gauge-status" id="status-v0">조준 중</span>
         </div>
         <div class="gauge-track" id="track-v0"><div class="gauge-marker" id="marker-v0" style="left:0%"></div></div>
@@ -1119,7 +1204,7 @@
         <span>기록된 세계 <b class="mono" id="worldCount">0</b>/4</span>
       </div>
 
-      <div class="result" id="result">첫 번째 게이지가 움직이고 있어요. 스페이스바로 v0 값을 고정해보세요.</div>
+      <div class="result" id="result">첫 번째 게이지가 움직이고 있어요. 스페이스바로 v₀ 값을 고정해보세요.</div>
 
       <div>
         <p class="worlds-title">시도 기록</p>
@@ -1246,6 +1331,8 @@
   let sedativeS1Taken = false;
   let sedativeS3Taken = false;
   let sedativeCount = 0; // unused sedatives currently held (0-2)
+  // 기억의 조각: one per stage, at that stage's 안전지대3 left edge; collected only (never used)
+  let memoryTaken = { 1:false, 2:false, 3:false };
   let gaugeSpeedMultiplier = 1;
   let gamePausedForItem = false;
   let collidedWithMud0 = false;
@@ -1620,13 +1707,13 @@
   }
 
   const QUANTITIES_STAGE1 = [
-    {key:'v0', label:'초기속도 v0', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
+    {key:'v0', label:'초기속도 v₀', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
   ];
   const QUANTITIES_STAGE2 = [
-    {key:'v0', label:'초기속도 v0', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
+    {key:'v0', label:'초기속도 v₀', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
   ];
   const QUANTITIES_STAGE3 = [
-    {key:'v0', label:'초기속도 v0', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
+    {key:'v0', label:'초기속도 v₀', min:0, max:25, step:5, decimals:2, speed:1/3, unit:'m/s'}
   ];
 
   const STAGE3_ZONES = {
@@ -1784,6 +1871,31 @@
     itemPickupOverlay.classList.remove('show');
     resumeFromItemPause();
     sedativeCount = Math.min(2, sedativeCount + 1);
+  });
+
+  const MEMORY_SHARDS = {
+    1: { name:'첫 번째', rgb:'255,155,203' },   // 분홍
+    2: { name:'두 번째', rgb:'255,214,90' },    // 노랑
+    3: { name:'세 번째', rgb:'130,205,255' }    // 하늘
+  };
+  function memoryShardM(st){
+    return st === 3 ? S3_ZONE3_LEFT_M : (st === 2 ? S2_ZONE3_LEFT_M : ZONE3_LEFT_M);
+  }
+  const memoryPickupOverlay = document.getElementById('memoryPickupOverlay');
+  function collectMemory(st){
+    memoryTaken[st] = true;
+    pauseForItem();
+    const info = MEMORY_SHARDS[st];
+    document.getElementById('memoryPickupText').textContent = info.name + ' 기억의 조각을 습득하였습니다.';
+    document.getElementById('memoryPickupPath').setAttribute('fill', 'rgb(' + info.rgb + ')');
+    document.getElementById('memoryPickupIcon').style.setProperty('--mem-glow', 'rgba(' + info.rgb + ',0.95)');
+    memoryPickupOverlay.classList.add('show');
+  }
+  document.getElementById('memoryPickupConfirmBtn').addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    memoryPickupOverlay.classList.remove('show');
+    resumeFromItemPause();
   });
 
   function openSedativeConfirm(e){
@@ -1973,7 +2085,7 @@
   function updateGaugeLabelsForStage(){
     const labelV0 = document.getElementById('label-v0');
     const qv0 = QUANTITIES[0];
-    labelV0.textContent = qv0.label + ' (' + qv0.unit + ')';
+    labelV0.innerHTML = qv0.label.replace('v₀', '<span class="gauge-v0"><span class="sym">v</span><span class="gauge-sub">0</span></span>') + ' (' + qv0.unit + ')';
   }
 
   function renderGaugeState(){
@@ -2016,7 +2128,7 @@
       renderGaugeState();
       mode = 'locked';
       resultEl.className = 'result';
-      resultEl.textContent = 'v0 '+captured.v0.toFixed(1)+' m/s — SHOT 버튼을 눌러 발사하세요.';
+      resultEl.textContent = 'v₀ '+captured.v0.toFixed(1)+' m/s — SHOT 버튼을 눌러 발사하세요.';
       mainBtn.disabled = false;
       mainBtn.textContent = 'SHOT';
       mainBtn.onclick = fireShot;
@@ -2039,15 +2151,15 @@
       s3Vx = captured.v0;
       s3EnergyPerMass = 0.5*captured.v0*captured.v0 + GRAVITY_G*s3TerrainHeightM(legStartM);
       flightDecel = 0;
-      resultEl.textContent = 'v0 '+captured.v0.toFixed(2)+' m/s — 언덕을 오르는 중…';
+      resultEl.textContent = 'v₀ '+captured.v0.toFixed(2)+' m/s — 언덕을 오르는 중…';
     } else if(gameStage === 2){
       flightV = captured.v0;
       flightDecel = 0;
-      resultEl.textContent = 'v0 '+captured.v0.toFixed(1)+' m/s — 등속으로 이동 중…';
+      resultEl.textContent = 'v₀ '+captured.v0.toFixed(1)+' m/s — 등속으로 이동 중…';
     } else {
       flightV = captured.v0;
       flightDecel = STAGE1_FRICTION_N / MASS;
-      resultEl.textContent = 'v0 '+captured.v0.toFixed(1)+' m/s — 퍼팅 중…';
+      resultEl.textContent = 'v₀ '+captured.v0.toFixed(1)+' m/s — 퍼팅 중…';
     }
     ballM = legStartM;
     mode = 'flying';
@@ -2060,6 +2172,7 @@
   }
 
   document.addEventListener('keydown', (e)=>{
+    if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
     if(e.code === 'Space'){
       e.preventDefault();
       if(e.repeat) return;
@@ -2169,7 +2282,11 @@
     });
   }
 
+  // game sound effects are silenced while the ending plays (the stage3 world keeps
+  // running behind it); cleared again whenever a tutorial/stage starts
+  let sfxMuted = false;
   function playExplosionSound(){
+    if(sfxMuted) return;
     if(!audioCtx || !masterGain) return;
     const t0 = audioCtx.currentTime;
 
@@ -2210,6 +2327,7 @@
   }
 
   function playShieldFadeSound(){
+    if(sfxMuted) return;
     if(!audioCtx || !masterGain) return;
     const t0 = audioCtx.currentTime;
     const dur = 1.0;
@@ -2256,6 +2374,7 @@
   }
 
   function playWallImpactSound(){
+    if(sfxMuted) return;
     if(!audioCtx || !masterGain) return;
     const t0 = audioCtx.currentTime;
 
@@ -2297,6 +2416,7 @@
   }
 
   function playMudSquelchSound(){
+    if(sfxMuted) return;
     if(!audioCtx || !masterGain) return;
     const t0 = audioCtx.currentTime;
 
@@ -2359,6 +2479,7 @@
   }
 
   function playNukeExplosionSound(){
+    if(sfxMuted) return;
     if(!audioCtx || !masterGain) return;
     const t0 = audioCtx.currentTime;
 
@@ -2532,7 +2653,7 @@
     tapLockBtn.classList.remove('armed');
     tapLockBtn.textContent = 'STOP';
     resultEl.className = 'result';
-    resultEl.textContent = '새 샷 준비 완료. 스페이스바로 v0 값을 고정해보세요.';
+    resultEl.textContent = '새 샷 준비 완료. 스페이스바로 v₀ 값을 고정해보세요.';
     updateDistanceDisplay();
     renderGaugeState();
   }
@@ -2543,7 +2664,7 @@
     s3Vx = 0;
     collidedWithWall = false;
     startNewShot();
-    resultEl.textContent = '안전지대1 통과! 이어서 안전지대2로 — 스페이스바로 v0 값을 고정해보세요.';
+    resultEl.textContent = '안전지대1 통과! 이어서 안전지대2로 — 스페이스바로 v₀ 값을 고정해보세요.';
   }
 
   function startS3Zone3(){
@@ -2552,21 +2673,21 @@
     s3Vx = 0;
     collidedWithWall = false;
     startNewShot();
-    resultEl.textContent = '안전지대2 통과! 이어서 안전지대3으로 — 스페이스바로 v0 값을 고정해보세요.';
+    resultEl.textContent = '안전지대2 통과! 이어서 안전지대3으로 — 스페이스바로 v₀ 값을 고정해보세요.';
   }
 
   function startZone2(){
     stage = 2;
     legStartM = ballM;
     startNewShot();
-    resultEl.textContent = '안전지대 1 통과! 이어서 안전지대 2로 — 스페이스바로 v0 값을 고정해보세요.';
+    resultEl.textContent = '안전지대 1 통과! 이어서 안전지대 2로 — 스페이스바로 v₀ 값을 고정해보세요.';
   }
 
   function startZone3(){
     stage = 3;
     legStartM = ballM;
     startNewShot();
-    resultEl.textContent = '안전지대 2 통과! 이어서 안전지대 3으로 — 스페이스바로 v0 값을 고정해보세요.';
+    resultEl.textContent = '안전지대 2 통과! 이어서 안전지대 3으로 — 스페이스바로 v₀ 값을 고정해보세요.';
   }
 
   function startS2Stage2(){
@@ -2662,6 +2783,7 @@
     sedativeS1Taken = false;
     sedativeS3Taken = false;
     sedativeCount = 0;
+    memoryTaken = { 1:false, 2:false, 3:false };
     gaugeSpeedMultiplier = 1;
     gamePausedForItem = false;
     collidedWithZone1Wall = false;
@@ -4130,6 +4252,35 @@
     }
   }
 
+  // 기억의 조각: a 120° slice of a circle (apex down), softly pulsing glow
+  function drawMemoryShard(cx, groundY, rgb){
+    const t = performance.now()/1000;
+    const bob = Math.sin(t*2.0)*3;
+    const pulse = 0.5 + 0.5*Math.sin(t*3.2);
+    const r = 15;
+    const apexY = groundY - 8 + bob;
+    ctx.save();
+    ctx.translate(cx, apexY);
+    const halo = ctx.createRadialGradient(0, -r*0.6, 0, 0, -r*0.6, r*2.2);
+    halo.addColorStop(0, 'rgba(' + rgb + ',' + (0.30 + 0.25*pulse).toFixed(3) + ')');
+    halo.addColorStop(1, 'rgba(' + rgb + ',0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(0, -r*0.6, r*2.2, 0, Math.PI*2); ctx.fill();
+    ctx.shadowColor = 'rgba(' + rgb + ',0.95)';
+    ctx.shadowBlur = 8 + 10*pulse;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, r, -Math.PI*5/6, -Math.PI/6);
+    ctx.closePath();
+    ctx.fillStyle = 'rgb(' + rgb + ')';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function drawPillItem(cx, groundY){
     const t = performance.now()/1000;
     const bob = Math.sin(t*2.2)*3;
@@ -4218,6 +4369,10 @@
     }
     if(gameStage === 3 && !tutorialMode && !sedativeS3Taken){
       drawPillItem(mToPx(S3_SEDATIVE_M), groundYAtM(S3_SEDATIVE_M));
+    }
+    if(!tutorialMode && MEMORY_SHARDS[gameStage] && !memoryTaken[gameStage]){
+      const memM = memoryShardM(gameStage);
+      drawMemoryShard(mToPx(memM), gameStage === 3 ? groundYAtM(memM) : mainLaneY, MEMORY_SHARDS[gameStage].rgb);
     }
     if(gameStage === 2 && !collidedWithMud0){
       drawMudLump(mToPx(S2_MUD0_M), mainLaneY, S2_MUD0_MASS_KG);
@@ -4497,6 +4652,14 @@
       ctx.strokeStyle = '#8A5F0E'; ctx.lineWidth = 1; ctx.stroke();
     }
 
+    // 기억의 조각 marker
+    if(!tutorialMode && MEMORY_SHARDS[gameStage] && !memoryTaken[gameStage]){
+      const memM = memoryShardM(gameStage);
+      ctx.fillStyle = 'rgb(' + MEMORY_SHARDS[gameStage].rgb + ')';
+      ctx.beginPath(); ctx.arc(mapX(memM), mapY(memM), Math.max(2, mmH*0.09), 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
     // stage2: mud lump markers
     if(gameStage === 2){
       if(!collidedWithMud0){
@@ -4676,10 +4839,11 @@
 
   // stage2's script has no 8-3/8-4 (no friction + end wall: the object can neither stop inside
   // the bomb corridor nor overshoot the safe zone) and numbers its closing results 21-1/21-2
-  const S2_TUTORIAL_NODE_ALIAS = { '22-1': '21-1', '22-2': '21-2', '8-3': '8-2', '8-4': '8-2' };
+  // stage2: every first-attempt miss → 13-1 (one retry line)
+  const S2_TUTORIAL_NODE_ALIAS = { '8-1': '13-1', '8-2': '13-1', '8-3': '13-1', '8-4': '13-1', '9-1': '14-1', '9-2': '14-2', '22-1': '32-1', '22-2': '32-2' };
   // stage3's script shifts everything up one number (launch is node 6): first-shot fails are
   // 7-1/7-2, results 8-1/8-2, closing results 24-1/24-2
-  const S3_TUTORIAL_NODE_ALIAS = { '8-1': '7-1', '8-2': '7-2', '8-3': '7-2', '8-4': '7-2', '9-1': '8-1', '9-2': '8-2', '22-1': '24-1', '22-2': '24-2' };
+  const S3_TUTORIAL_NODE_ALIAS = { '8-1': '6-1', '8-2': '6-2', '8-3': '6-2', '8-4': '6-2', '9-1': '7-1', '9-2': '7-2', '22-1': '44-1', '22-2': '44-2' };
   const S1_TUTORIAL_NODE_ALIAS = { '8-1': '10-1', '8-2': '10-2', '8-3': '10-3', '8-4': '10-4', '9-1': '11-1', '9-2': '11-2', '22-1': '37-1', '22-2': '37-2' };
   function tutorialNodeId(id){
     // same rule as currentTutorialTree(): 3 → S3, 2 → S2, anything else → S1
@@ -4824,6 +4988,7 @@
       sedativeCount,
       sedativeS1Taken,
       sedativeS3Taken,
+      memoryTaken: Object.assign({}, memoryTaken),
       clearedStages: clearedStages.slice()
     };
   }
@@ -4840,6 +5005,7 @@
     sedativeCount = snap.sedativeCount;
     sedativeS1Taken = snap.sedativeS1Taken;
     sedativeS3Taken = snap.sedativeS3Taken;
+    memoryTaken = Object.assign({ 1:false, 2:false, 3:false }, snap.memoryTaken || {});
     clearedStages = snap.clearedStages.slice();
     if(sedativeStatusEl) sedativeStatusEl.classList.remove('show');
     beginGameFromSelect(snap.gameStage);
@@ -4895,6 +5061,7 @@
     sedativeS1Taken = false;
     sedativeS3Taken = false;
     sedativeCount = 0;
+    memoryTaken = { 1:false, 2:false, 3:false };
     gaugeSpeedMultiplier = 1;
     gamePausedForItem = false;
     collidedWithZone1Wall = false;
@@ -5084,6 +5251,9 @@
           if(!tutorialMode && stage === 1 && !sedativeS3Taken && ballM >= S3_SEDATIVE_M){
             collectSedative('s3');
           }
+          if(!tutorialMode && !memoryTaken[3] && ballM >= memoryShardM(3)){
+            collectMemory(3);
+          }
         } else {
         ballM += flightV*dt;
         flightV = Math.max(0, flightV - flightDecel*dt);
@@ -5187,6 +5357,9 @@
 
         if(!tutorialMode && gameStage === 1 && !sedativeS1Taken && ballM >= SEDATIVE_M){
           collectSedative('s1');
+        }
+        if(!tutorialMode && (gameStage === 1 || gameStage === 2) && !memoryTaken[gameStage] && ballM >= memoryShardM(gameStage)){
+          collectMemory(gameStage);
         }
 
         if(mode === 'flying' && !collidedWithWall){
@@ -5340,7 +5513,7 @@
   const selectTitleEl = document.getElementById('selectTitle');
   function showSelectView(view){
     stageSelectEl.dataset.view = view;
-    selectTitleEl.textContent = view === 'stage' ? '스테이지 선택' : '게임모드 선택';
+    selectTitleEl.textContent = view === 'stage' ? '스테이지 선택' : '물리학으로 폭탄 피하기';
   }
   showSelectView('mode');
   // story mode plays every tutorial in order with no way to skip them
@@ -5352,12 +5525,97 @@
     // story mode: intro story → stage1 tutorial → stage1 → stage2 tutorial → stage2 → stage3 tutorial → stage3
     startStoryIntro();
   });
-  document.getElementById('stageModeBtn').addEventListener('click', (e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    storyMode = false;
-    showSelectView('stage');
+  // 게임 기획 의도: a panel over the main screen
+  const intentPanelEl = document.getElementById('intentPanel');
+  document.getElementById('intentBtn').addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    intentPanelEl.querySelector('.intent-body').scrollTop = 0;
+    intentPanelEl.classList.add('show');
   });
+  document.getElementById('intentCloseBtn').addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    intentPanelEl.classList.remove('show');
+  });
+
+  // ===== 명예의 전당 (records live in the teacher's Google Sheet via an Apps Script web app) =====
+  const HALL_OF_FAME_URL = 'https://script.google.com/macros/s/AKfycbxNVDFPlIiuLvBz3z2brwY0roUfoRe_CUI2PHrUaAXcMuYp_E2YwCXrSZKmi6xF7QI/exec';   // ← Apps Script 웹 앱 주소(https://script.google.com/macros/s/…/exec)
+  const hofPanelEl = document.getElementById('hofPanel');
+  const hofTbodyEl = document.getElementById('hofTbody');
+  const hofStatusEl = document.getElementById('hofStatus');
+  function hofEscape(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function renderHallOfFame(list, highlightRank){
+    hofTbodyEl.innerHTML = list.map((r)=>{
+      const cls = (r.rank <= 3 ? 'top' + r.rank : '') + (r.rank === highlightRank ? ' me' : '');
+      return '<tr class="' + cls + '"><td>' + r.rank + '</td><td>' + hofEscape(r.name) + '</td><td>' + formatTime(r.ms) + '</td></tr>';
+    }).join('');
+    hofStatusEl.textContent = list.length ? '' : '아직 등록된 기록이 없어요. 첫 번째 주인공이 되어 보세요!';
+    hofStatusEl.style.display = list.length ? 'none' : '';
+  }
+  function loadHallOfFame(){
+    hofTbodyEl.innerHTML = '';
+    hofStatusEl.style.display = '';
+    if(!HALL_OF_FAME_URL){ hofStatusEl.textContent = '명예의 전당을 준비 중이에요.'; return; }
+    hofStatusEl.textContent = '불러오는 중…';
+    fetch(HALL_OF_FAME_URL, { cache:'no-store' })
+      .then((r)=>r.json())
+      .then((d)=>{ if(!d || !d.ok) throw new Error('bad'); renderHallOfFame(d.list || []); })
+      .catch(()=>{ hofStatusEl.textContent = '지금은 명예의 전당을 불러올 수 없어요. 잠시 후 다시 시도해 주세요.'; });
+  }
+  document.getElementById('hofBtn').addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    hofPanelEl.classList.add('show');
+    loadHallOfFame();
+  });
+  document.getElementById('hofCloseBtn').addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    hofPanelEl.classList.remove('show');
+  });
+
+  // THE END: register this run's stage1-3 clear time under a nickname (once per ending)
+  const hofRegisterEl = document.getElementById('hofRegister');
+  const hofNameEl = document.getElementById('hofName');
+  const hofSubmitBtn = document.getElementById('hofSubmitBtn');
+  const hofMsgEl = document.getElementById('hofMsg');
+  let hofRegistered = false;
+  function resetHallOfFameRegister(){
+    hofRegistered = false;
+    hofNameEl.value = '';
+    hofNameEl.disabled = false;
+    hofSubmitBtn.disabled = false;
+    hofMsgEl.textContent = '';
+    hofMsgEl.classList.remove('err');
+    hofRegisterEl.style.display = HALL_OF_FAME_URL ? '' : 'none';
+  }
+  function hofSetMsg(text, isErr){ hofMsgEl.textContent = text; hofMsgEl.classList.toggle('err', !!isErr); }
+  function submitHallOfFame(){
+    if(hofRegistered || !HALL_OF_FAME_URL) return;
+    const name = hofNameEl.value.replace(/\s+/g, ' ').trim();
+    if(!name){ hofSetMsg('닉네임을 입력해 주세요.', true); hofNameEl.focus(); return; }
+    if(name.length > 7){ hofSetMsg('닉네임은 7자 이내로 입력해 주세요.', true); return; }
+    hofSubmitBtn.disabled = true; hofNameEl.disabled = true;
+    hofSetMsg('등록하는 중…');
+    fetch(HALL_OF_FAME_URL, { method:'POST', body: JSON.stringify({ name, ms: Math.round(endingRecord.elapsedMs) }) })
+      .then((r)=>r.json())
+      .then((d)=>{
+        if(d && d.ok){
+          hofRegistered = true;
+          hofSetMsg(d.rank ? ('명예의 전당 ' + d.rank + '위에 등록되었습니다!') : '명예의 전당에 등록되었습니다!');
+          return;
+        }
+        const why = d && d.error;
+        hofSetMsg(why === 'bad' ? '사용할 수 없는 닉네임이에요. 다른 닉네임을 입력해 주세요.'
+               : why === 'name' ? '닉네임은 1~7자로 입력해 주세요.'
+               : why === 'time' ? '이 기록은 등록할 수 없어요.'
+               : '등록하지 못했어요. 잠시 후 다시 시도해 주세요.', true);
+        hofSubmitBtn.disabled = false; hofNameEl.disabled = false;
+      })
+      .catch(()=>{
+        hofSetMsg('등록하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.', true);
+        hofSubmitBtn.disabled = false; hofNameEl.disabled = false;
+      });
+  }
+  hofSubmitBtn.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); submitHallOfFame(); });
+  hofNameEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); submitHallOfFame(); } });
   document.getElementById('backToModeBtn').addEventListener('click', (e)=>{
     e.preventDefault();
     e.stopPropagation();
@@ -5372,6 +5630,31 @@
   const tutorialRetryBtn = document.getElementById('tutorialRetryBtn');
   const newtonDialogueEl = document.getElementById('newtonDialogue');
   const newtonTextEl = document.getElementById('newtonText');
+  // Dialogue text → HTML with physics notation: italic quantity symbols (v, a, s, m, g, h),
+  // subscript v₀, true minus sign (−), × for multiplication; numbers and units stay upright.
+  function formatPhysicsHTML(text){
+    const esc = (t)=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const I = (t)=>'<span class="sym">' + t + '</span>';
+    const V0 = I('v') + '₀';
+    const store = [];
+    const keep = (html)=>{ store.push(html); return '\u0001' + (store.length-1) + '\u0002'; };
+    let t = esc(text);
+    // whole formulas first
+    t = t.replace(/v²-v0²=2as/g, ()=>keep(I('v') + '² − ' + V0 + '² = 2' + I('as')));
+    t = t.replace(/-v0²=2as/g, ()=>keep('−' + V0 + '² = 2' + I('as')));
+    t = t.replace(/v0²=4s/g, ()=>keep(V0 + '² = 4' + I('s')));
+    t = t.replace(/\(1\/2\)\(2\)v0²=100J/g, ()=>keep('(1/2)(2)' + V0 + '² = 100J'));
+    t = t.replace(/\(1\/2\)mv²/g, ()=>keep('(1/2)' + I('mv') + '²'));
+    t = t.replace(/mgh/g, ()=>keep(I('mgh')));
+    t = t.replace(/(\d+)x(\d+)x(\d+)=(\d+J)/g, (m,a,b,c,d)=>keep(a + '×' + b + '×' + c + ' = ' + d));
+    t = t.replace(/\((\d)x(\d)\)/g, (m,a,b)=>keep('(' + a + '×' + b + ')'));
+    t = t.replace(/"-2m\/s²"/g, ()=>keep('"−2m/s²"'));
+    t = t.replace(/4s의/g, ()=>keep('4' + I('s') + '의'));
+    t = t.replace(/v0/g, ()=>keep(V0));
+    // lone quantity letters in prose (not part of a word, number or unit)
+    t = t.replace(/(^|[^A-Za-z0-9\/·])([vasmgh])(?![A-Za-z0-9\/·²])/g, (m,pre,ch)=>pre + keep(I(ch)));
+    return t.replace(/\u0001(\d+)\u0002/g, (m,i)=>store[+i]);
+  }
   const newtonNextBtn = document.getElementById('newtonNextBtn');
   const newtonPrevBtn = document.getElementById('newtonPrevBtn');
   const newtonChoicesEl = document.getElementById('newtonChoices');
@@ -5406,7 +5689,7 @@
     newtonCurrentNodeId = nodeId;
     const node = newtonDialogueTree[nodeId];
     setDialogueSpeaker(node.speaker || 'newton');
-    newtonTextEl.textContent = node.text;
+    newtonTextEl.innerHTML = formatPhysicsHTML(node.text);
     newtonChoicesEl.innerHTML = '';
     newtonPrevBtn.style.display = (newtonHistory.length > 0 && !node.noPrev) ? 'inline-flex' : 'none';
     if(node.choices){
@@ -5537,6 +5820,7 @@
   });
 
   function beginGameFromSelect(chosenStage){
+    sfxMuted = false;
     introDone = true;
     updateRotateOverlay();
     gameStartTime = performance.now();
@@ -5578,7 +5862,7 @@
     "6": { speaker:"newton", text: "마찰력이란 물체의 운동을 방해하는 힘을 말한단다. 즉, 운동 중인 물체에 마찰력이 작용하면 운동을 방해 받게 되면서 속도가 점점 느려지게 되는 거지!", next: "7" },
     "7": { speaker:"newton", text: "즉, 물체가 오른쪽으로 움직이게 되면, 마찰력을 왼쪽으로 받게 되어 그 속도가 점점 느려지다가 결국 멈추게 되는 것이란다.", next: "8" },
     "8": { speaker:"newton", text: "이 공간에서 자네가 해야 할 것은 물체를 적당한 속도로 발사해서 안전지대 안에서 물체가 정지하도록 하는 것이야! 이걸 하지 못한다면, 실제 마찰의 구역에 가자마자 죽게 될걸세.", next: "9" },
-    "9": { speaker:"newton", text: "그럼 발사를 직접 한번 해보도록 하자. 조준바가 좌우로 왔다갔다할 때, 원하는 속도에서 stop 버튼을 누르면 조준바가 멈출거야. 그 후 타이밍을 맞추어 shot 버튼을 누르게 되면 물체가 조준한 속도로 발사된단다. 이해가 되었으면 다음 버튼을 누르고 발사해보거라.", next: null },
+    "9": { speaker:"newton", text: "그럼 발사를 직접 한번 해보게나. 조준바가 좌우로 왔다갔다할 때, 원하는 속도에서 stop 버튼을 누르면 조준바가 멈출게야. 그 후 타이밍을 맞추어 shot 버튼을 누르게 되면 물체가 조준한 속도로 발사된다네. 이해가 되었으면 다음 버튼을 누르고 발사해 보거라.", next: null },
 
     "10-1": { speaker:"newton", text: "발사된 초기 속도가 너무 느려. 다시 한번 도전해보거라.", action: 'retry' },
     "10-2": { speaker:"newton", text: "발사 타이밍이 좋지 않았단다. 폭탄이 터지고 난 직후에 발사를 하는 게 최고의 타이밍이란다. 다시 한번 도전해보거라.", action: 'retry' },
@@ -5638,7 +5922,7 @@
         { label: "다시 해보기", action: "retryClosing" }
       ]
     },
-    "37-2": { speaker:"newton", text: "아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 본 게임의 장소로 보내주도록 하지. 무운을 비네.",
+    "37-2": { speaker:"newton", text: "아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 마찰의 구역으로 보내주도록 하지. 무운을 비네.",
       choices: [
         { label: "다시 해보기", action: "retryClosing" },
         { label: "stage1 시작", action: "finishTutorial" }
@@ -5648,150 +5932,143 @@
 
   // stage2 tutorial script (충돌의 구역: 완전 비탄성충돌 / 운동량 보존)
   const NEWTON_S2_DIALOGUE = {
-    '1': { text: '스테이지2 튜토리얼에 온 것을 환영한다!', next: '2' },
-    '2': { text: '이곳은 충돌의 구역이다. 곳곳에 진흙이 있고, 물체가 진흙을 만나면 "완전 비탄성충돌"을 하는 곳이지!', next: '3' },
-    '3': {
-      text: '그런데 자네, "완전 비탄성충돌"이 무엇인지 알고 있나?',
-      choices: [
-        { label: '① 그게 뭐죠?', next: '4-1' },
-        { label: '② 당연하죠!', next: '4-2' }
-      ]
-    },
-    '4-1': { text: '완전 비탄성충돌이란 두 물체가 충돌 후 서로 달라붙어 같이 움직이는 것을 말한단다.', next: '5' },
-    '4-2': { text: '오 제법이군! 그럼 완전 비탄성충돌을 하게 되면 두 물체가 서로 달라붙어 같이 움직이게 된다는 것도 잘 알고 있겠군!', next: '5' },
-    '5': { text: '즉, 위에 있는 파란색 물체를 발사했을 때, 진흙을 만나게 되면 서로 달라붙어 같이 움직이게 되는 거란다.', next: '6' },
-    '6': { text: '자네의 임무는 물체를 적당한 속도로 발사해서 보호막의 보호를 받으며 폭격에 맞지 않도록 하여 안전지대까지 물체를 도달하도록 하는 것이야!', next: '7' },
-    '7': { text: '그럼 발사를 직접 한번 해보도록 하자. 조준바가 좌우로 왔다갔다할 때, 원하는 속도에서 stop 버튼을 누르면 조준바가 멈출거야. 그 후 shot 버튼을 누르게 되면 물체가 조준한 속도로 발사가 된단다. 준비가 되었으면 다음 버튼을 누르고 발사해보거라.', next: null },
+    "1": { speaker:"newton", text: "어서 오시게. 마찰의 구역에서 무사히 돌아왔구만!", next: "2" },
+    "2": { speaker:"object", text: "어르신, 아니 선생님 덕분입니다! 선생님이라고 불러도 될까요?", next: "3" },
+    "3": { speaker:"newton", text: "껄껄 편한 대로 부르게.", next: "4" },
+    "4": { speaker:"object", text: "넵 선생님! 그런데, 여기는 또 어디죠..?", next: "5" },
+    "5": { speaker:"newton", text: "이곳은 충돌의 구역을 미리 연습시켜주기 위한 가상의 공간이다. 충돌의 구역에는 곳곳에 진흙이 있고, 물체가 진흙을 만나 충돌하면 진흙이 물체에 달라 붙은 채로 움직이는 곳이지!", next: "6" },
+    "6": { speaker:"object", text: "윽.. 설마 진흙 말고 다른 건 아니겠죠..?", next: "7" },
+    "7": { speaker:"newton", text: "껄껄껄 걱정 마시게. 진흙이 아니고 똥이라네", next: "8" },
+    "8": { speaker:"object", text: "예..?", next: "9" },
+    "9": { speaker:"newton", text: "아 실수로 반대로 말했구만! 똥이 아니고 진흙이니 걱정 마시게~ 껄껄껄", next: "10" },
+    "10": { speaker:"newton", text: "이곳, 충돌의 구역에서는 끊임없이 공중에서 폭격이 가해진다네. 이 폭격을 뚫고 안전지대로 가야 한다네. 다행히 폭격 구역에는 폭격을 막아주는 보호막이 좌우로 왕복 운동을 하고 있다네. 자네, 폭격 구역을 어떻게 뚫어야 할지 감이 오는가?", next: "11" },
+    "11": { speaker:"object", text: "보호막 아래에서 보호막을 따라 보호를 받으면서 가야하는거죠?", next: "12" },
+    "12": { speaker:"newton", text: "그렇다네! 역시 이해가 빠르구만! 즉, 물체의 속도를 보호막의 속도에 맞추어서 보호막이 출발점에 왔을 때 타이밍을 맞춰서 발사해야 한다네. 단, 진흙이 변수라네. 직접 경험해보는게 좋겠지? 준비가 되었으면 다음 버튼을 누르고 발사해보거라.", next: null },
 
-    '8-1': { text: '발사된 초기 속도가 너무 느려. 다시 한번 도전해보거라.', action: 'retry' },
-    '8-2': { text: '쉽지 않지? 다시 한번 도전해보거라.', action: 'retry' },
-    '9-1': { text: '성공하기 쉽지 않지? 하지만 자네가 "운동량 보존"이라는 것만 알게 된다면 쉽게 성공할 수 있다네!', next: '10' },
-    '9-2': { text: '아주 잘했어. 다만, 자네가 "운동량 보존"이라는 것을 알게 된다면 더 어려운 상황에서도 정확하게 성공할 수 있다네!', next: '10' },
+    "13-1": { speaker:"newton", text: "쉽지 않지? 다시 한번 도전해보거라.", action: 'retry' },
+    "14-1": { speaker:"newton", text: "성공하기 쉽지 않지? 하지만 자네가 \"운동량 보존\"이라는 것만 알게 된다면 쉽게 성공할 수 있다네!", next: "15" },
+    "14-2": { speaker:"newton", text: "아주 잘했어. 다만, 자네가 \"운동량 보존\"이라는 것을 알게 된다면 더 어려운 상황에서도 정확하게 성공할 수 있다네!", next: "15" },
 
-    '10': { text: '"운동량 보존"이라는 것을 알기 위해서는 먼저 "운동량"이라는 것을 알아야 한다네!', next: '11' },
-    '11': { text: '운동량이란 물체의 운동 상태를 나타내는 물리량으로, 물체의 질량과 속도를 곱한 값이라네!', next: '12' },
-    '12': {
-      text: '예를 들어, 질량이 2kg이고, 속도가 3m/s면 운동량은 얼마가 될 것 같은가?',
+    "15": { speaker:"newton", text: "자네, 물체가 움직이다가 무거운 진흙을 만나서 붙어버리면, 속도가 어떻게 된다고 생각하나? 아까 관찰해서 알고 있겠지?",
       choices: [
-        { label: '① 5kg·m/s', next: '13-1' },
-        { label: '② 6kg·m/s', next: '13-2' }
+        { label: "① 속도가 줄어들죠!", next: "16-1" },
+        { label: "② 그대로 아닌가요?", next: "16-2" }
       ]
     },
-    '13-1': { text: '다시 한번 생각해보게! 운동량은 질량과 속도의 "곱"이란다.' },
-    '13-2': { text: '훌륭하군! 자네는 물리학에 재능이 있어!', next: '14' },
-    '14': { text: '자네는 운동량을 정확하게 알고 있으니 운동량 보존을 이해하는 것은 식은 죽 먹기라네!', next: '15' },
-    '15': { text: '"운동량 보존"이란 충돌 전과 충돌 후에 전체 운동량은 보존된다는 것을 말한단다. 즉, 비탄성 충돌에서는 충돌 전 물체의 운동량+진흙의 운동량은 충돌 후 진흙이 달라붙은 물체의 운동량과 같다는 뜻이지!', next: '16' },
-    '16': {
-      text: '만약, 충돌 전 2kg인 물체의 속도가 3m/s이고, 그 앞에 정지 상태의 1kg 진흙이 있을 때, 전체 운동량은 얼마라고 생각하는가?',
+    "16-1": { speaker:"newton", text: "자네 역시 물리학적 통찰력이 대단하구만! 정답이라네.", next: "17" },
+    "16-2": { speaker:"newton", text: "과연 그럴까? 참고로 진흙이 붙으면 더 무거워진다네. 다시 한 번 생각해보시게." },
+    "17": { speaker:"newton", text: "물체가 움직이는 도중에 진흙을 만나서 붙은 채로 같이 움직이게 되면, 속도가 느려진다네.", next: "18" },
+    "18": { speaker:"object", text: "왜죠?", next: "19" },
+    "19": { speaker:"newton", text: "자네 “운동량”이라고 들어보았는가?", next: "20" },
+    "20": { speaker:"object", text: "아.. 운동량.. 기억이 날랑 말랑 하네요..", next: "21" },
+    "21": { speaker:"newton", text: "운동량이란 물체의 운동 상태를 나타내는 물리량으로, 질량과 속도를 곱한 값이라네. 자네, 2kg인 물체가 3m/s로 운동하고 있을 때, 운동량은 얼마라고 생각하는가?",
       choices: [
-        { label: '① 6kg·m/s', next: '17-1' },
-        { label: '② 9kg·m/s', next: '17-2' }
+        { label: "① 5kg·m/s", next: "22-1" },
+        { label: "② 6kg·m/s", next: "22-2" }
       ]
     },
-    '17-1': { text: '역시 훌륭하군! 충돌 전 물체의 운동량은 6kg·m/s이고, 진흙은 속도가 0이므로 운동량도 0이기 때문에 전체 운동량은 6kg·m/s가 되는 것이지!', next: '18' },
-    '17-2': { text: '다시 한번 생각해보게! 충돌 전 진흙의 속도는 0이라네!' },
-    '18': {
-      text: '그렇다면, 2kg인 물체가 3m/s의 속도로 정지 상태인 1kg의 진흙에 비탄성 충돌한 후, 진흙이 달라붙은 물체의 속도는 얼마가 될 것이라고 생각하는가? 참고로 전체 운동량이 보존되어야 한다네!',
+    "22-1": { speaker:"newton", text: "다시 한 번 생각해 보시게. 운동량은 질량과 속도의 곱이라네." },
+    "22-2": { speaker:"newton", text: "훌륭하구만! 이렇게 빠르게 운동량을 이해하다니 훌륭해!", next: "23" },
+    "23": { speaker:"newton", text: "물체가 운동을 하다보면, 다른 물체와 충돌에서 튕겨 나갈 수도 있고, 진흙과 충돌해서 붙은 채로 운동을 할 수도 있겠지? 바로 이러한 충돌 전 후에 전체 운동량은 변하지 않고 보존이 된다네!", next: "24" },
+    "24": { speaker:"object", text: "그게 바로 운동량 보존이군요. 예를 들어서 설명 부탁드려도 될까요?", next: "25" },
+    "25": { speaker:"newton", text: "물체가 운동하다가 가만히 있던 1kg 진흙을 만나는 경우를 생각해보게. 2kg인 물체가 3m/s로 운동하면 운동량이 6kg·m/s라고 했지. 이 물체가 1kg 진흙을 만나게 되어 붙게 되면, 전체 질량은 얼마지?", next: "26" },
+    "26": { speaker:"object", text: "2kg인 물체와 1kg인 진흙이 붙는 거니까 3kg..?", next: "27" },
+    "27": { speaker:"newton", text: "맞다네. 3kg이라네. 그런데 전체 운동량은 6kg·m/s로 보존이 되어야 한다네! 그렇다면, 3kg인 물체와 진흙 덩어리의 속도가 얼마가 되어야 하지???",
       choices: [
-        { label: '① 3m/s', next: '19-1' },
-        { label: '② 2m/s', next: '19-2' }
+        { label: "① 1m/s", next: "28-1" },
+        { label: "② 2m/s", next: "28-2" }
       ]
     },
-    '19-1': { text: '다시 한번 생각해보게! 서로 달라붙게 되면 질량이 합쳐져서 속도는 느려져야 한다네!' },
-    '19-2': { text: '역시 물리학을 잘하는군! 전체 운동량이 6kg·m/s이고, 충돌 후에는 물체가 진흙이 서로 달라붙어 전체 질량이 3kg이 되므로, 그 때의 속도는 6에서 3을 나눈 2m/s가 되는 것이지!', next: '20' },
-    '20': { text: '현재 보호막의 속도가 2m/s로 맞춰져 있다네. 물체의 질량은 2kg이고 진흙의 질량은 1kg이니 물체의 속도를 3m/s로 발사하게 되면 충돌 후 속도가 보호막과 같아 질거란다. 그럼 보호막의 보호를 받으며 안전지대까지 갈 수 있게 되는거지. 그럼 초기속도가 3m/s가 되도록 한번 조준바를 조준해서 발사해보게나!', next: null },
+    "28-1": { speaker:"newton", text: "다시 한 번 생각해보시게. 물체와 진흙 덩어리의 질량(3kg)과 속도의 곱이 6kg·m/s이 되어야 한다네." },
+    "28-2": { speaker:"newton", text: "정답이라네! 운동량 보존까지 이렇게 바로 이해하다니 역시 똑똑하군!", next: "29" },
+    "29": { speaker:"newton", text: "즉, 2kg인 물체가 3m/s로 운동하다가 1kg인 진흙을 만나 서로 붙어버리면 3kg 덩어리의 운동량은 6kg·m/s로 보존되어야 하므로, 속도는 2m/s로 느려진다는 말이라네!", next: "30" },
+    "30": { speaker:"newton", text: "예를 하나 더 들면, 2kg인 물체가 2m/s로 움직이다가 2kg인 진흙을 만나 서로 붙어버리면 4kg 덩어리의 운동량은 처음과 같은 4kg·m/s로 보존되어야 하므로, 속도는 1m/s로 느려진다는 것이라네!", next: "31" },
+    "31": { speaker:"newton", text: "현재 보호막의 속도가 2m/s로 맞춰져 있다네. 물체의 질량은 2kg이고 진흙의 질량은 1kg이니 물체의 속도를 3m/s로 발사하게 되면 충돌 후 속도가 보호막과 같아 지면서 보호를 받을 수 있을 것이라네. 그럼 보호막 아래에 들어갈 수 있게 타이밍을 잘 맞추어서 발사해보게나!", next: null },
 
-    '21-1': {
-      text: '생각보다 쉽지 않지? 차분하게 다시 한번 조준해보고, 타이밍을 잘 맞춰서 발사해보게!',
+    "32-1": { speaker:"newton", text: "생각보다 쉽지 않지? 차분하게 다시 한번 조준해보고, 타이밍을 잘 맞춰서 발사해보게!",
       choices: [
-        { label: '다시 해보기', action: 'retryClosing' }
+        { label: "다시 해보기", action: "retryClosing" }
       ]
     },
-    '21-2': {
-      text: '아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 본 게임의 장소로 보내주도록 하지. 무운을 비네.',
+    "32-2": { speaker:"newton", text: "아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 충돌의 구역으로 보내주도록 하지. 무운을 비네.",
       choices: [
-        { label: '다시 해보기', action: 'retryClosing' },
-        { label: 'stage2 시작', action: 'finishTutorial' }
+        { label: "다시 해보기", action: "retryClosing" },
+        { label: "stage2 시작", action: "finishTutorial" }
       ]
     }
   };
 
   // stage3 tutorial script (언덕의 구역: 운동에너지 / 위치에너지 / 역학적에너지 보존)
   const NEWTON_S3_DIALOGUE = {
-    '1': { text: '스테이지3 튜토리얼에 온 것을 환영한다!', next: '2' },
-    '2': { text: '이곳은 언덕의 구역이다. 폭탄을 피해 언덕을 넘어가야 하는 곳이지! 단, 적당한 "운동 에너지"로 물체를 발사해야 언덕을 넘어 안전 지대에 들어갈 수 있단다! 에너지가 너무 작으면 언덕을 오르지 못하고, 에너지가 너무 크면 폭탄구역까지 넘어가서 터지게 되는거지!', next: '3' },
-    '3': {
-      text: '그런데 자네, "운동 에너지"가 무엇인지 알고 있나?',
-      choices: [
-        { label: '① 그게 뭐죠?', next: '4-1' },
-        { label: '② 당연하죠!', next: '4-2' }
-      ]
-    },
-    '4-1': { text: '운동 에너지란 운동하는 물체가 가지는 에너지를 말한단다. 질량이 크고 속도가 빠를수록 운동 에너지가 큰 것이란다!', next: '5' },
-    '4-2': { text: '오 제법이군! 그럼 질량이 크고 속도가 빠를수록 운동 에너지가 큰 것이라는 것도 잘 알고 있겠군!', next: '5' },
-    '5': { text: '자네의 임무는 물체를 적당한 속도로 발사해서 언덕 하나를 넘어 안전지대 안에 물체를 도달하도록 하는 것이야! 아까도 말했지만 운동 에너지가 너무 작거나 크게 발사를 하면 안된다네!', next: '6' },
-    '6': { text: '그럼 발사를 직접 한번 해보도록 하자. 조준바가 좌우로 왔다갔다할 때, 원하는 속도에서 stop 버튼을 누르면 조준바가 멈출거야. 그 후 shot 버튼을 누르게 되면 물체가 조준한 속도로 발사가 된단다. 준비가 되었으면 다음 버튼을 누르고 발사해보거라.', next: null },
+    "1": { speaker:"newton", text: "어서 오시게! 마찰의 구역부터 충돌의 구역까지 해내다니 대단하구만! 이제 마지막이라네!", next: "2" },
+    "2": { speaker:"object", text: "감사합니다 선생님. 여기는 어디죠..?", next: "3" },
+    "3": { speaker:"newton", text: "이곳은 언덕의 구역을 미리 연습시켜주기 위한 가상의 공간이란다. 폭탄을 피해 언덕을 넘어가야 하는 곳이지! 단, 적당한 속도로 발사해야 한단다. 속도가 너무 느리면 언덕을 오르지 못하게 되고, 너무 빠르면 언덕을 계속 넘어가다가 폭탄 구역까지 들어가게 되어 죽게 된단다.", next: "4" },
+    "4": { speaker:"object", text: "그 적당한 속도는 어떻게 찾는거죠..? 여긴 다른 구역들과는 또 다르네요..", next: "5" },
+    "5": { speaker:"newton", text: "껄껄껄 일단 한번 발사해보면서 경험해보거라. 안전지대가 있는 언덕의 높이가 4.5m이고, 다음 언덕의 높이가 5.5m이기 때문에 그 중간인 5m 정도 높이로 올라갈 만큼의 속도로 발사하면 된다네.", next: null },
 
-    '7-1': { text: '발사된 초기 속도가 너무 느려. 다시 한번 도전해보거라.', action: 'retry' },
-    '7-2': { text: '쉽지 않지? 다시 한번 도전해보거라.', action: 'retry' },
-    '8-1': { text: '성공하기 쉽지 않지? 하지만 자네가 "역학적에너지 보존"이라는 것만 알게 된다면 쉽게 성공할 수 있다네!', next: '9' },
-    '8-2': { text: '아주 잘했어. 다만, 자네가 "역학적에너지 보존"이라는 것을 알게 된다면 더 어려운 상황에서도 정확하게 성공할 수 있다네!', next: '9' },
+    "6-1": { speaker:"newton", text: "발사된 초기 속도가 너무 느려. 다시 한번 도전해보거라.", action: 'retry' },
+    "6-2": { speaker:"newton", text: "쉽지 않지? 다시 한번 도전해보거라.", action: 'retry' },
+    "7-1": { speaker:"newton", text: "성공하기 쉽지 않지? 하지만 자네가 “에너지”에 대해 알게 된다면 쉽게 성공할 수 있다네!", next: "8" },
+    "7-2": { speaker:"newton", text: "아주 잘했어. 다만, 자네가 “에너지”에 대해 알게 된다면 더 어려운 상황에서도 정확하게 성공할 수 있다네!", next: "8" },
 
-    '9': { text: '"역학적에너지 보존"이라는 것을 알기 위해서는 먼저 "역학적에너지"라는 것을 알아야 한다네!', next: '10' },
-    '10': { text: '역학적에너지란 물체의 운동에너지와 위치에너지를 합친 값이라네. 그럼 하나씩 설명해줄테니 잘 들어보시게. 어렵지 않다네.', next: '11' },
-    '11': {
-      text: '먼저 운동에너지는 아까 말했던 질량이 크고 속도가 빠를수록 큰 에너지란다. 식으로 쓰면 (1/2)mv²으로 쓸 수 있지. 여기서 m은 물체의 질량이고 v는 물체의 속도란다. 즉, 물체의 질량과 속도의 제곱에 비례하는 값이라고 할 수 있지! 그렇다면, 물체의 질량이 2kg이고, 속도가 5m/s라면 물체의 운동에너지는 얼마일까?',
+    "8": { speaker:"newton", text: "자네, 에너지라는 말 들어보았나?", next: "9" },
+    "9": { speaker:"object", text: "실생활에서도 많이 사용하는 그 에너지 말씀하시는 건가요?", next: "10" },
+    "10": { speaker:"newton", text: "그렇다네! 에너지란 일을 할 수 있는 능력을 뜻하지. 그 에너지에는 종류가 다양하다네!", next: "11" },
+    "11": { speaker:"object", text: "어떤 것들이 있나요?", next: "12" },
+    "12": { speaker:"newton", text: "우리 주변만 둘러봐도 바로 보인다네. 전등에서 나오는 빛에너지, 전선을 통해 전달되는 전기에너지, 온수에 사용되는 열에너지, 달리는 사람이 가지는 운동에너지, 비를 떨어지게 하는 위치에너지 등 아주 다양하다네.", next: "13" },
+    "13": { speaker:"object", text: "와.. 너무 많은데요..", next: "14" },
+    "14": { speaker:"newton", text: "껄껄껄 걱정하지 말게나. 언덕의 구역에서는 2가지만 알면 된다네. 바로 “운동에너지”와 “위치에너지”라네!", next: "15" },
+    "15": { speaker:"newton", text: "운동에너지란 운동하는 물체가 가지는 에너지를 말한단다. 전속력으로 달리는 호랑이와 기어다니는 고양이 중 어떤 게 더 에너지가 커보이나?", next: "16" },
+    "16": { speaker:"object", text: "당연히 호랑이죠!", next: "17" },
+    "17": { speaker:"newton", text: "그렇지. 빠를수록, 무거울수록 운동에너지가 크다네. 정확한 식으로 쓰면, (1/2)mv²으로 쓸 수 있지. 여기서 m은 물체의 질량이고 v는 물체의 속도란다. 그렇다면, 물체의 질량이 2kg이고, 속도가 10m/s라면 물체의 운동에너지는 얼마일까?",
       choices: [
-        { label: '① 50J', next: '12-1' },
-        { label: '② 25J', next: '12-2' }
+        { label: "① 100J", next: "18-2" },
+        { label: "② 200J", next: "18-1" }
       ]
     },
-    '12-1': { text: '다시 한번 생각해보게! 질량과 속도의 제곱에 (1/2)을 곱해야 한다네!' },
-    '12-2': { text: '훌륭하군! 자네는 물리학적 역량이 뛰어나구만!', next: '13' },
-    '13': { text: '자네가 운동 에너지를 정확히 이해했다고 생각이 되는군. 이제 위치에너지라는 것에 대해 설명해주겠네. 위치에너지란 물체에 잠재되어 있는 에너지를 말한다네. 그래서 영어로는 퍼텐셜 에너지라고 하지. 위치에너지에는 여러 종류가 있는데, 우리는 스테이지3을 클리어하기 위해 "중력에 의한 위치에너지"를 알아야 한단다.', next: '14' },
-    '14': { text: '중력에 의한 위치에너지는 물체가 높은 위치에 있으면 커지는 에너지란다. 1cm 높이에서 떨어뜨린 계란은 깨지지 않지만, 1m 높이에서 떨어뜨린 계란은 당연히 깨지겠지? 바로 위치에너지가 크기 때문이란다.', next: '15' },
-    '15': { text: '위치에너지는 물체의 질량, 중력가속도, 그리고 물체의 높이를 곱한 값이란다. 식으로 쓰면 mgh이고, 여기서 m은 물체의 질량, g은 중력가속도, h는 기준점으로부터 물체의 높이란다. 중력가속도는 물체가 자유 낙하할 때의 가속도인데, 지구에서는 약 10m/s² 정도란다. 즉, 물체를 떨어뜨리면 1초당 속도가 10m/s씩 증가한다고 보면 되는거지.', next: '16' },
-    '16': {
-      text: '그렇다면, 위치에너지가 mgh라면, 중력가속도가 10m/s²일 때, 질량이 2kg이고 높이가 기준점으로부터 3m일 때 이 물체의 위치에너지는 얼마라고 생각하는가?',
+    "18-1": { speaker:"newton", text: "식을 다시 한 번 보고 생각해 보시게." },
+    "18-2": { speaker:"newton", text: "정답이라네! 역시 똑똑하구만. 아주 탐나는 인재야.", next: "19" },
+    "19": { speaker:"newton", text: "자네, 이제 운동에너지에 대해 알게 된 것 같군. 아까 물체를 발사했을 때 언덕으로 오르는 동안 속도가 어떻게 되었는지 기억이 나나?", next: "20" },
+    "20": { speaker:"object", text: "속도가 점점 느려졌습니다!", next: "21" },
+    "21": { speaker:"newton", text: "그랬었지. 그럼 물체의 높이는 점점 어떻게 되었나?", next: "22" },
+    "22": { speaker:"object", text: "언덕을 오르니까 높이는 높아졌죠", next: "23" },
+    "23": { speaker:"newton", text: "맞다네. 언덕을 오르는 동안 속도는 느려지고, 높이는 높아졌다네. 이 높이가 높아질수록 커지는 에너지가 바로 “위치에너지”라네!", next: "24" },
+    "24": { speaker:"newton", text: "1cm 높이에서 계란을 떨어뜨리면 깨지지 않지만, 1m 높이에서 떨어뜨리면 깨지게 되지. 바로 위치에너지가 더 크기 때문이라네.", next: "25" },
+    "25": { speaker:"newton", text: "위치에너지는 영어로 퍼텐셜에너지라고 한다네. 바로 잠재적인 에너지라네. 높은 곳에서 움직임이 보이지는 않지만, 떨어뜨리는 순간 움직임이 보이는 잠재된 에너지라는 뜻이지.", next: "26" },
+    "26": { speaker:"newton", text: "위치에너지는 물체의 질량(m), 중력가속도(g), 기준으로부터의 높이(h)를 곱한 값이라네. 여기서 중력가속도란 자유낙하하는 물체의 가속도를 말한다네. 지구에서는 약 10m/s²인데, 이는 물체를 떨어뜨리면 1초에 속도가 10m/s씩 빨라진다는 뜻이지.", next: "27" },
+    "27": { speaker:"newton", text: "즉, 위치에너지는 mgh라는 식으로 나타낼 수 있다네. 자네, 그럼 중력가속도가 10m/s²인 곳에서 질량이 2kg인 물체가 지면(기준)으로부터 5m 높이에 있다면, 이 물체의 위치에너지는 얼마라고 생각하는가?",
       choices: [
-        { label: '① 60J', next: '17-1' },
-        { label: '② 30J', next: '17-2' }
+        { label: "① 50J", next: "28-1" },
+        { label: "② 100J", next: "28-2" }
       ]
     },
-    '17-1': { text: '역시 똑똑하군! 10*2*3=60J이지! 간단하지?', next: '18' },
-    '17-2': { text: '다시 한번 생각해보게!' },
-    '18': {
-      text: '정리하면, 운동에너지는 (1/2)mv²이고, 위치에너지는 mgh라네. 그렇다면 역학적 에너지란 무엇인가? 아까 말한 것처럼 운동에너지와 위치에너지를 합친 값이라네. 즉, 역학적에너지는 (1/2)mv²+mgh라고 할 수 있지. 그럼, 중력가속도가 10m/s²일 때, 질량이 2kg, 속도가 5m/s, 기준점으로부터 높이가 3m라면 이 물체의 역학적 에너지는 얼마일까?',
-      choices: [
-        { label: '① 110J', next: '19-1' },
-        { label: '② 85J', next: '19-2' }
-      ]
-    },
-    '19-1': { text: '자네, 계산 실수를 한 것 같군! 다시 한번 생각해보게!' },
-    '19-2': { text: '역시 자네는 물리학에 재능이 있군! 운동에너지는 25J이고 위치에너지는 60J이므로 역학적에너지는 그 합인 85J이 되는 것이지!', next: '20' },
-    '20': { text: '그렇다면 역학적에너지 보존이란 무엇인가? 공기 저항이나 마찰 등이 없을 때, 운동에너지와 위치에너지의 합이 일정하게 보존된다는 것이란다! 예를 들어, 물체가 언덕을 오르게 되면, 속도가 줄어들면서 운동에너지가 감소하는 대신, 그 만큼 높이가 높아지므로 위치에너지는 증가하겠지? 그 때 운동에너지가 감소한 만큼 위치에너지가 증가하면서 합은 일정하게 유지된다는 것이란다!', next: '21' },
-    '21': {
-      text: '그럼, 중력가속도가 10m/s²일 때, 질량이 2kg인 물체를 오르막길을 향해 어떤 속도로 발사해야 5m 높은 곳에서 속도가 0이 될 것이라고 생각하는가?',
-      choices: [
-        { label: '① 100m/s', next: '22-1' },
-        { label: '② 10m/s', next: '22-2' }
-      ]
-    },
-    '22-1': { text: '자네, 계산 실수를 한 것 같군! 운동에너지는 100J이고, 속도를 구해야 한다네. 다시 한번 생각해보게!' },
-    '22-2': { text: '대단하군! 이렇게 빠르게 역학적에너지 보존을 이해한다니! 발사할 때의 운동에너지와 5m 오르막 위에서의 위치에너지가 같아야 하는데, 위치에너지가 100J이므로 운동에너지도 100J이 되어야 하고, 그때의 속도는 바로 10m/s가 되는 것이지!', next: '23' },
-    '23': { text: '현재 안전지대가 있는 언덕의 높이가 4.5m이고, 5.5m 높이까지는 안전지대라네. 즉, 그 사이에 있는 5m의 높이에서 속도가 0이 되도록 하는 속도인 10m/s정도로 발사하게 되면 안전지대에 도달할 수 있을 것이라네. 그럼 초기속도가 10m/s가 되도록 한번 조준바를 조준해서 발사해보게나!', next: null },
+    "28-1": { speaker:"newton", text: "식을 다시 한 번 보고 생각해 보시게." },
+    "28-2": { speaker:"newton", text: "정답이라네! 세 수치를 모두 곱하면 되는 것이지!", next: "29" },
+    "29": { speaker:"object", text: "(운동하는 물체가 가지는 운동에너지.. 높은 위치에 있는 물체가 가지는 위치에너지.. 정신이 혼미해진다..)", next: "30" },
+    "30": { speaker:"newton", text: "자네 괜찮은가? 정신이 혼미해지는 것 같은데? 껄껄껄", next: "31" },
+    "31": { speaker:"object", text: "괜찮습니다! 재밌네요! 하하하", next: "32" },
+    "32": { speaker:"newton", text: "재미없는데", next: "33" },
+    "33": { speaker:"object", text: "예?", next: "34" },
+    "34": { speaker:"newton", text: "장난일세 껄껄껄 이보다 더 재밌을 수는 없지! 껄껄껄", next: "35" },
+    "35": { speaker:"object", text: "(정신이 혼미해진다)", next: "36" },
+    "36": { speaker:"newton", text: "자네, 운동에너지와 위치에너지를 합친 게 무엇인지 아는가?", next: "37" },
+    "37": { speaker:"object", text: "음... 운위에너지..? 뭐죠..?", next: "38" },
+    "38": { speaker:"newton", text: "바로 “역학적에너지”라네! 공기저항이나 마찰 등이 없다면, 이 역학적에너지는 항상 보존된다네! 언덕을 올라가는 물체의 속도가 느려진다는 것은 운동에너지가 감소한다는 뜻이지. 그리고 동시에 물체의 높이가 높아진다는 것은 위치에너지가 증가한다는 뜻이지. 자네, 감이 오는가?", next: "39" },
+    "39": { speaker:"object", text: "아! 운동에너지가 감소한 만큼 위치에너지가 증가하는 것이군요!!??", next: "40" },
+    "40": { speaker:"newton", text: "바로 그거라네! 역시 아주 우수한 인재구만! 나중에 내 연구실로 한 번 찾아오도록 하게.", next: "41" },
+    "41": { speaker:"newton", text: "자네가 말한대로 위치에너지가 증가하면, 그만큼 운동에너지는 감소하게 되는 것이라네. 즉, 언덕에 물체를 발사할 때, 언덕 위에서 정지할만한 속도로 발사를 하면 안전지대에 안착할 수 있는 거지.", next: "42" },
+    "42": { speaker:"newton", text: "이 공간에서 언덕은 4.5m이고, 5.5m 높이까지는 안전지대라네. 즉, 5m정도 높이에서 운동에너지가 0이 되도록 발사를 하면 된다네. 5m높이에서 2kg인 물체의 위치에너지는 2x10x5=100J이므로, 처음 발사할 때 운동에너지도 100J이 되면 된다네. 즉, 물체의 질량이 2kg이니까 (1/2)(2)v0²=100J이므로 초기속도가 10m/s가 되면 안전지대에 들어갈 수 있을 것이라네.", next: "43" },
+    "43": { speaker:"newton", text: "참고로, 안전지대 안에는 역방향 방지턱이 있어서, 역방향으로 떨어지는 일은 없을 것이라네. 그럼 초기속도가 10m/s가 되도록 한번 조준바를 조준해서 발사해보게나!", next: null },
 
-    '24-1': {
-      text: '생각보다 쉽지 않지? 차분하게 다시 한번 조준해보고, 타이밍을 잘 맞춰서 발사해보게!',
+    "44-1": { speaker:"newton", text: "생각보다 쉽지 않지? 차분하게 다시 한번 조준해보고, 타이밍을 잘 맞춰서 발사해보게!",
       choices: [
-        { label: '다시 해보기', action: 'retryClosing' }
+        { label: "다시 해보기", action: "retryClosing" }
       ]
     },
-    '24-2': {
-      text: '아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 본 게임의 장소로 보내주도록 하지. 무운을 비네.',
+    "44-2": { speaker:"newton", text: "아주 잘했어. 이제는 자네 혼자서도 충분히 잘해낼 수 있을 것이라는 믿음이 생기는 군. 그럼 이제 자네를 마지막 구역인 언덕의 구역으로 보내주도록 하지. 무운을 비네.",
       choices: [
-        { label: '다시 해보기', action: 'retryClosing' },
-        { label: 'stage3 시작', action: 'finishTutorial' }
+        { label: "다시 해보기", action: "retryClosing" },
+        { label: "stage3 시작", action: "finishTutorial" }
       ]
     }
   };
@@ -6116,7 +6393,10 @@
   }
   function storyWalkTo(targetX, onArrive){ storyWalk = { target: targetX, onArrive }; }
 
+  // whole story run (opening → tutorials → stages → ending), wall-clock
+  let storyRunStartTs = null;
   function startStoryIntro(){
+    storyRunStartTs = performance.now();
     stageSelectEl.classList.add('fade-out');
     clearTimeout(stageSelectRemoveTimer);
     stageSelectRemoveTimer = setTimeout(()=>{ stageSelectEl.remove(); }, 1000);
@@ -6218,25 +6498,25 @@
   // floats away glowing → white flash → 엔딩 화면2: Newton alone speaks to the player →
   // fade to black → "THE END" screen with the run's record → back to the game-mode select.
   const ENDING_DIALOGUE = {
-    '1': { speaker:'object', text: '어르신! 아니, 뉴턴 선생님! 해냈어요! 3개의 구역을 모두 탈출했어요!', next: '2' },
-    '2': { speaker:'newton', text: '훌륭하군! 마찰의 구역, 충돌의 구역, 언덕의 구역까지… 그런데 자네, 뭔가 떠오르지 않나?', next: '3' },
-    '3': { speaker:'object', text: '맞아요… 머릿속에 뭔가 떠오르기 시작해요.', next: '4' },
-    '4': { speaker:'newton', text: '잊고 있었던 기억이 돌아오고 있는 것이란다. 무엇이 보이나?', next: '5' },
-    '5': { speaker:'object', text: '물리학 문제가 보여요.. "마찰이 없는 수평면 위에 질량 2kg인 물체가 정지해 있다…" 이 문장, 무척 익숙하네요.', next: '6' },
-    '6': { speaker:'newton', text: '그렇다네. 자네는 물리 문제 속에 사는 \'물체\'라네. 수많은 아이들이 자네를 밀고, 부딪히고, 언덕 위로 굴리면서 자네와 함께 물리학을 배워 왔다네.', next: '7' },
-    '7': { speaker:'object', text: '그럼… 곳곳에서 폭탄이 터지던 이 세계는 뭐였죠?', next: '8' },
-    '8': { speaker:'newton', text: '문제가 안 풀려서 머리가 터질 것 같은 학생들의 마음속이었다네. 허허.', next: '9' },
-    '9': { speaker:'object', text: '아하하… 그럼 저는 이제 어디로 가나요?', next: '10' },
-    '10': { speaker:'newton', text: '원래 있던 곳, 물리 문제 속으로 돌아가야겠지. 그곳으로 돌아가 자네가 알게 된 4개의 열쇠로 아이들이 길을 잃지 않도록 이끌어주게나.', next: '11' },
-    '11': { speaker:'newton', text: 'v²-v0²=2as, 뉴턴 운동 제2법칙, 운동량 보존, 그리고 역학적에너지 보존. 잊지 말게.', next: '12' },
-    '12': {
-      speaker:'object', text: '감사합니다, 뉴턴 선생님! 절대 잊지 않을게요!',
+    "1": { speaker:"object", text: "선생님! 해냈어요! 기억의 조각을 모두 모았어요!", next: "2" },
+    "2": { speaker:"newton", text: "훌륭하군! 마찰의 구역, 충돌의 구역, 언덕의 구역까지 그 힘든 구역들을 모두 해내다니… 아주 대견해. 그런데 자네, 뭔가 떠오르지 않나?", next: "3" },
+    "3": { speaker:"object", text: "맞아요… 머릿속에 뭔가 떠오르기 시작했어요.", next: "4" },
+    "4": { speaker:"newton", text: "잊고 있었던 기억이 돌아오고 있는 것이란다. 무엇이 보이나?", next: "5" },
+    "5": { speaker:"object", text: "저를 보고 있는 아이들의 얼굴이 보여요.. 그리고 물리학 문제가 보여요.. \"마찰이 없는 수평면 위에 질량 2kg인 물체가 정지해 있다…\" 이 문장, 무척 익숙하네요.", next: "6" },
+    "6": { speaker:"newton", text: "그렇다네. 자네는 물리 문제 속에 사는 '물체'라네. 수많은 아이들이 자네를 밀고, 부딪히고, 언덕 위로 굴리면서 자네와 함께 물리학을 공부해 왔다네.", next: "7" },
+    "7": { speaker:"object", text: "그럼… 곳곳에서 폭탄이 터지던 이 세계는 뭐였죠?", next: "8" },
+    "8": { speaker:"newton", text: "문제가 안 풀려서 머리가 터질 것 같은 학생들의 마음속이었다네. 껄껄껄.", next: "9" },
+    "9": { speaker:"object", text: "아하하… 그럼 저는 이제 어디로 가게 되나요?", next: "10" },
+    "10": { speaker:"newton", text: "원래 있던 곳, 물리 문제 속으로 돌아가야겠지. 그곳으로 돌아가 자네가 얻은 경험들로 아이들이 물리학 속에서 길을 잃지 않도록 잘 이끌어주게나.", next: "11" },
+    "11": { speaker:"newton", text: "속도, 가속도, 힘, 운동량, 그리고 에너지가 함께했던 순간들을 잊지 말게.", next: "12" },
+    "12": { speaker:"object", text: "감사합니다, 선생님! 절대 잊지 않을게요!",
       choices: [
-        { label: '작별 인사를 한다', action: 'endingFarewell' }
+        { label: "작별 인사를 한다", action: "endingFarewell" }
       ]
     },
-    '13': { speaker:'newton', text: '그리고… 화면 앞의 자네.', next: '14' },
-    '14': { speaker:'newton', text: '매 순간 물체를 안전지대로 이끈 건 바로 자네였지. 자네도 이제 물리학으로 세상을 움직일 줄 아는 사람이 되었어. 내가 언제나 뒤에서 응원하겠네.', next: null }
+
+    "13": { speaker:"newton", text: "그리고… 화면 앞의 자네.", next: "14" },
+    "14": { speaker:"newton", text: "매 순간 물체를 안전지대로 이끈 건 바로 자네였지. 자네도 이제 물리학으로 세계를 바라볼 줄 아는 사람이 되었을 것이라 믿네. 수고했다네. 한결같이 하다 보면 자네의 꿈도 이루어질걸세. Good Luck!", next: null }
   };
 
   const screenCurtainEl = document.getElementById('screenCurtain');
@@ -6264,6 +6544,7 @@
       tutorialContentEl.style.display = 'none';
       tutorialScreenEl.classList.add('show');
 
+      sfxMuted = true;
       storyActive = true;
       storyPaused = false;
       storyBackBtnEl.classList.add('show');
@@ -6292,8 +6573,8 @@
     newtonDialogueActive = false;
     newtonDialogueOnComplete = null;
     storyFloat = { t: 0, done: ()=>{
-      // white flash: brighten to white (1s), switch to 엔딩 화면2, fade back in (0.5s)
-      storyFadeColor = 'white';
+      // darken (1s), switch to 엔딩 화면2, brighten (0.5s) — same as the other screen changes
+      storyFadeColor = 'black';
       storyFadeTo(1, 1000, ()=>{
         storyScene = 'e2';
         storySparkles = [];
@@ -6301,9 +6582,18 @@
           storyFadeColor = 'black';
           storyLater(()=>{
             showNewtonDialogue(ENDING_DIALOGUE, '13', ()=>{
-              // after the last line: fade to black, then the THE END screen
+              // after the last line: whole page darkens (1s), THE END is set up
+              // behind the curtain, then it brightens (0.5s)
               storyBackBtnEl.classList.remove('show');
-              storyFadeTo(1, 1000, showEndingScreen);
+              screenCurtainEl.classList.add('on');
+              screenCurtainEl.style.transition = 'opacity 1s linear';
+              screenCurtainEl.style.opacity = '1';
+              setTimeout(()=>{
+                showEndingScreen();
+                screenCurtainEl.style.transition = 'opacity 0.5s linear';
+                screenCurtainEl.style.opacity = '0';
+                setTimeout(()=>{ screenCurtainEl.classList.remove('on'); }, 500);
+              }, 1000);
             });
           }, 1000);
         });
@@ -6316,11 +6606,14 @@
     storyTimers.forEach(clearTimeout); storyTimers = [];
     storyWalk = null; storyFadeAnim = null; storyFloat = null;
     setDialogueSpeaker('newton');
+    resetHallOfFameRegister();
     document.getElementById('endingTime').textContent = formatTime(endingRecord.elapsedMs);
-    document.getElementById('endingDistance').textContent = endingRecord.distanceM.toFixed(1) + ' m';
-    endingScreenEl.classList.add('show');
+    document.getElementById('endingTotalTime').textContent = formatTime(storyRunStartTs !== null ? performance.now() - storyRunStartTs : endingRecord.elapsedMs);
+    // shown at once (no fade of its own): it appears behind the black curtain
+    endingScreenEl.style.transition = 'none';
+    endingScreenEl.classList.add('show', 'visible');
     void endingScreenEl.offsetWidth;
-    endingScreenEl.classList.add('visible');
+    endingScreenEl.style.transition = '';
     storyCanvasEl.classList.remove('show');
     if(tutorialScreenEl && document.body.contains(tutorialScreenEl)) tutorialScreenEl.remove();
     tutorialContentEl.style.display = '';
@@ -6335,6 +6628,7 @@
   });
 
   function showTutorial(chosenStage){
+    sfxMuted = false;
     pendingTutorialStage = chosenStage;
     stageSelectEl.classList.add('fade-out');
     clearTimeout(stageSelectRemoveTimer);
