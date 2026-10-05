@@ -2114,7 +2114,8 @@
 
   function lockCurrentGauge(){
     if(!introDone) return;
-    if(isPortrait()) return;
+    // (no portrait check here any more: a phone held upright shows the game turned to
+    // landscape via html.force-land, so STOP must work in that orientation too)
     if(mode !== 'aiming' || phaseIndex >= QUANTITIES.length) return;
     const q = QUANTITIES[phaseIndex];
     const value = q.min + fraction*(q.max-q.min);
